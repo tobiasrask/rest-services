@@ -108,7 +108,7 @@ class ExampleResource extends Resource {
     });
   }
 }
-
+export default ExampleResource;
 ```
 
 Now start your server and open url: http://127.0.0.1:3000/api/example/test.
@@ -203,7 +203,7 @@ In our example we defined one parameter named *id* to be retrieved from url path
 Note that your API might need additional protection because of [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). We will cover this documentation in near future.
 
 ### Need more infromation?
-This module is inspired by Drupals Services module. Feel free to comment and leave issues.
+This module is inspired by Drupal's Services module. Feel free to comment and leave issues.
 
 
 [npm]: https://www.npmjs.org/package/rest-services
