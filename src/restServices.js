@@ -6,6 +6,8 @@ class RestServices {
   /**
   * Construct services.
   *
+  * TODO: Provide methods to register new resources on the fly...
+  *
   * @param configuration
   */
   constructor(configuration) {

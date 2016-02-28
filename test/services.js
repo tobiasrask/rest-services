@@ -111,7 +111,7 @@ describe('RestServices', () => {
           url: `/${servicePathProb}/${resourceIdProb}/1`,
           assumeSelector: JSON.stringify({
             type: 'operations',
-            operation: 'destroy'
+            operation: 'delete'
           })
         },        
         {
@@ -230,7 +230,7 @@ describe('RestServices', () => {
           url: `/${servicePathProb}/${resourceIdProb}/1`,
           assumeSelector: JSON.stringify({
             type: 'operations',
-            operation: 'destroy'
+            operation: 'delete'
           })
         },        
         {
@@ -320,9 +320,9 @@ describe('RestServices', () => {
         create: 'createProb:',
         update: 'updateProb:',
         index: 'indexProb:',
-        delete: 'destroyProb:',
+        delete: 'deleteProb:',
         action: 'actionProb:',
-        targettedAction: 'targettedActionProb:'
+        targetedAction: 'targetedActionProb:'
       }
 
       const selectorTests = [
@@ -378,7 +378,7 @@ describe('RestServices', () => {
             type: 'targeted_actions',
             operation: 'targetActionName'
           }),
-          assumeResult: resultTests.targettedAction
+          assumeResult: resultTests.targetedAction
         },
       ];
 
@@ -437,12 +437,12 @@ describe('RestServices', () => {
                     }
                   ]
                 },
-                destroy: {
+                delete: {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
                     callback(null, {
-                      result: resultTests.destroy
+                      result: resultTests.delete
                     });
                   },
                   arguments: [
@@ -484,7 +484,7 @@ describe('RestServices', () => {
                   description: '',
                   callback: (args, callback) => {
                     callback(null, {
-                      result: resultTests.targettedAction
+                      result: resultTests.targetedAction
                     });
                   },
                   arguments: []

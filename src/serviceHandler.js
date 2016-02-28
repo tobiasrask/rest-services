@@ -205,7 +205,7 @@ class ServiceHandler {
       if (urlInfo.resource_identifier !== undefined) {
         selector = {
           type: "operations",
-          operation: "destroy"
+          operation: "delete"
         }
       }
     }
