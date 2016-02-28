@@ -127,7 +127,9 @@ Our example was one simple use case. Now let's talk about how it really works.
 
 #### Services
 First of all you define *Service* for your app. In our example we defined **Example API Service**, which is listening url **/api**.
-You can have multiple services if you like.
+You can have multiple services if you like, they all have unique path.
+
+If you need to alter response data, just extend **RestServices** class and implement *sendResponse(err, req, res, response)* method. We will cover this documentation in near future.
 
 
 #### Resources
@@ -197,7 +199,11 @@ In our example we defined one parameter named *id* to be retrieved from url path
   ]
 ```
 
+### Security
+Note that your API might need additional protection because of [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). We will cover this documentation in near future.
+
 ### Need more infromation?
-This module is under active development, so it may change a little bit. I will write more detailed example in next few days.
+This module is inspired by Drupals Services module. Feel free to comment and leave issues.
+
 
 [npm]: https://www.npmjs.org/package/rest-services
