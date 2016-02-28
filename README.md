@@ -1,5 +1,5 @@
 # rest-services
-[rest-services](https://www.npmjs.org/package/rest-services): provides easy to use RESTful API for [express](https://www.npmjs.com/package/express)
+[rest-services](https://www.npmjs.org/package/rest-services): provides easy to use RESTful API for [express](https://www.npmjs.com/package/express).
 
 Build your RESTful API by defining one or more Services with list of Resources.
 
@@ -17,9 +17,9 @@ Normal usage with ES2015 modules:
 ```js
 // server.js
 import {RestServices} from 'rest-services'
-import ExampleResource from './example-resource';
+import ExampleResource from './example-resource'
+import express from 'express'
 
-var express = require('express');
 var app = express();
 
 // We define our example service with one resource "ExampleResource"
@@ -60,7 +60,7 @@ class ExampleResource extends Resource {
   * Define resource endpoints by overriding getInitialState() method.
   *
   * @return state
-  *
+  */
   getInitialState() {
     return {
       props: {
@@ -111,8 +111,8 @@ class ExampleResource extends Resource {
 
 ```
 
-Now start your server and open url: http://127.0.0.1:3000/api/example/test
-It will show you json response
+Now start your server and open url: http://127.0.0.1:3000/api/example/test.
+You will see json response from server:
 
 ```js
 {
@@ -123,23 +123,23 @@ It will show you json response
 
 ### Documentation
 
-Our example was one simple use case. Now let's talk about how it really works.
+Our example above was one simple use case. Now let's talk about how it really works.
 
 #### Services
-First of all you define *Service* for your app. In our example we defined **Example API Service**, which is listening url **/api**.
-You can have multiple services if you like, they all have unique path.
+At first we define **Service** for our app. In our example we defined **Example API Service**, which is listening url **/api**.
+You can have multiple services if you like, they all have unique paths.
 
-If you need to alter response data, just extend **RestServices** class and implement *sendResponse(err, req, res, response)* method. We will cover this documentation in near future.
+If you need to alter services response data or format, just extend **RestServices** class and implement *sendResponse(err, req, res, response)* method. We will cover this documentation in near future.
 
 
 #### Resources
-You need to define *Resources* to be used with your *Service*. We defined **ExampleResource** with id **example**.
-This means that all requests to **/api/example** will be mapped for your resource.
+We need to define the **Resource(s)** to be used with our **Service**. In our example we defined **ExampleResource** with id **example**.
+This means that all requests to **/api/example** will be mapped to our example resource.
 
 You can define three different types of resource mappings:
 1) operations
 2) actions and
-3) targeted actions
+3) targeted actions.
 
 Operations
 ----------
@@ -152,15 +152,15 @@ Supported CRUD+index operations and corresponding http methods are:
 
 In our example these would be:
 
-Create item: POST /api/example
-Retrieve item: GET /api/example/[id]
-Update item: PUT /api/example/[id]
-Delete item: DELETE /api/example/[id]
-Index items: GET /api/example
+- Create item: POST /api/example
+- Retrieve item: GET /api/example/[id]
+- Update item: PUT /api/example/[id]
+- Delete item: DELETE /api/example/[id]
+- Index items: GET /api/example
 
 Actions and targeted actions
 ----------------------------
-Each endpoint can have unlimited number of actions and targeted actions. The difference between these two action classes that actions are general, targeted actions are targeted for certain entity id.
+Each endpoint can have unlimited number of actions and targeted actions. The difference between these two action classes is that actions are general, targeted actions are *targeted* for certain *entity id*.
 
 In our example these would be:
 Action: POST /api/example/[action]
@@ -170,17 +170,17 @@ Resource parameters
 -------------------
 Resource mappings may define list of parameters they are expecting. Parameters are then processed and provided for your callback automatically.
 
-In our example we defined one parameter named *id* to be retrieved from url path. Parameters can be fetched from *url*, *query string* and *payload*.
+In our example we defined one parameter named *id* to be retrieved from url path. Parameters can be fetched from *url*, *query string* or request *payload*.
 
 ```js
-  // Examples how to define arguments with different sources:
+  // Examples how to define arguments with different sources: 
   let arguments = [
     {
       name: 'id',
       source: {path: 0},
       optional: false,
       type: 'string',
-      description: 'Entity id from url path'
+      description: 'Entity id from url path, index 0'
     },
     {
       name: 'limit',
