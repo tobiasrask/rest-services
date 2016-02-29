@@ -365,11 +365,13 @@ In our example these would be:
 
 Actions and targeted actions
 ----------------------------
-Each endpoint can have unlimited number of actions and targeted actions. The difference between these two action classes is that actions are general, targeted actions are *targeted* for certain *entity id*.
+Each endpoint can have unlimited number of actions and targeted actions. Both actions are executed by HTTP POST request. The difference between these two action types is that actions are general, targeted actions are *targeted* for certain *entity id*.
+- Action (POST)
+- Targeted action (POST)
 
 In our example these would be:
-Action: POST /api/example/[action]
-Targeted action: POST /api/example/[id]/[action]
+- Action: POST /api/example/subscribe
+- Targeted action: POST /api/example/[id]/subscribe
 
 Resource parameters
 -------------------
