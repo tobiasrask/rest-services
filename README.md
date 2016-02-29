@@ -146,8 +146,45 @@ class ExampleResource extends Resource {
             ]
           }          
         },
-        actions: {},
-        targeted_actions: {}
+        actions: {
+          subscribe: {
+            title: "Subscribe",
+            description: "Subscribe to get news from new entities",
+            callback: this.subscribe.bind(this),
+            arguments: [
+              {
+                name: 'subscription',
+                source: 'data',
+                optional: false,
+                type: 'array',
+                description: 'Subscription data'
+              }
+            ]
+          }
+        },
+        targeted_actions: {
+          subscribe: {
+            title: "Subscribe to entity modifications",
+            description: "Subscribe to get news from this entity modifications",
+            callback: this.entitySubscribe.bind(this),
+            arguments: [
+              {
+                name: 'id',
+                source: {path: 0},
+                optional: false,
+                type: 'string',
+                description: 'Entity id'
+              },          
+              {
+                name: 'subscription',
+                source: 'data',
+                optional: false,
+                type: 'array',
+                description: 'Subscription data'
+              }
+            ]
+          }
+        }
       }
     };
   }
@@ -233,7 +270,48 @@ class ExampleResource extends Resource {
     callback(null, {
       result: entityIds
     });
-  }  
+  }
+
+  /*
+  * Subscribe action.
+  *
+  * @param args
+  * @param callback
+  */
+  subscribe(args, callback) {
+    let succeed = false;
+
+    // Request payload data is passed for you 
+    let entityParams = args.subscription;
+
+    // Implement this functionality...
+
+    callback(null, {
+      result: succeed
+    });
+  }
+
+  /*
+  * Entity subscribe, targeted action.
+  *
+  * @param args
+  * @param callback
+  */
+  entitySubscribe(args, callback) {
+    let succeed = false;
+
+    // Entity id will be available from args
+    let entityId = args.id;
+
+    // Request payload data is passed for you 
+    let entityParams = args.subscription;
+
+    // Implement this functionality...
+
+    callback(null, {
+      result: succeed
+    });
+  }
 }
 export default ExampleResource;
 ```
