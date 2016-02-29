@@ -76,19 +76,15 @@ class RestServices {
     // For each service handlers
     self.getServices().forEach((serviceHandler, serviceName) => {
       self.log(`Mounting service: ${serviceName}`);
-      
       // Mount each resource id
       serviceHandler.getResourceIdentifiers().map((resource_key) => {
         let path = `/${serviceHandler.getServicePath()}/${resource_key}`;
         self.log(`Registering path ${path}`);
-
         app.use(path, function(req, res, next) {
-
           // Route request to resource
           serviceHandler.lookup(req, res, function(err, response) {
-
             // And Send response
-            this.sendResponse(err, req, res, response);
+            self.sendResponse(err, req, res, response);
           });
         });
       });
