@@ -334,6 +334,8 @@ Our example above was one simple use case. Now let's talk about how it really wo
 At first we define **Service** for our app. In our example we defined **Example API Service**, which is listening url **/api**.
 You can have multiple services if you like, they all have unique paths.
 
+At the moment all reponses are returned with pure JSON.
+
 If you need to alter services response data or format, just extend **RestServices** class and implement *sendResponse(err, req, res, response)* method. We will cover this documentation in near future.
 
 
