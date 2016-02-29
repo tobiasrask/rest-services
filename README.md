@@ -205,7 +205,7 @@ class ExampleResource extends Resource {
 
     // Send custom http error codes
     if (isNaN(entityId))
-      return this.setError(500, "Invalid entity id, it must be a number.")
+      return callback(this.setError(500, "Invalid entity id."));
 
     // By default your endpoint will return HTTP status code 200 OK
     callback(null, {
