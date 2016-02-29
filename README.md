@@ -47,7 +47,7 @@ var server = app.listen(3000, () => {
 
 ```
 
-Now let's defined our example resource:
+Now let's define our example resource:
 
 ```js
 // example-resource.js
@@ -69,8 +69,8 @@ class ExampleResource extends Resource {
       resource_definition: {
         operations: {
           retrieve: {
-            title: '',
-            description: '',
+            title: 'Retrieve entity',
+            description: 'Retrieve entity by id.',
             callback: this.retrieveItem.bind(this),
             arguments: [
               {
@@ -82,6 +82,69 @@ class ExampleResource extends Resource {
               }
             ]
           },
+          create: {
+            title: 'Create entity',
+            description: 'Create entity.',
+            callback: this.createItem.bind(this),
+            arguments: [
+              {
+                name: 'entityData',
+                source: 'data',
+                optional: false,
+                type: 'array',
+                description: 'Entity data'
+              }
+            ]
+          },
+          update: {
+            title: 'Update entity',
+            description: 'Update entity.',
+            callback: this.updateItem.bind(this),
+            arguments: [
+              {
+                name: 'id',
+                source: {path: 0},
+                optional: false,
+                type: 'string',
+                description: 'Entity id'
+              },
+              {
+                name: 'entityData',
+                source: 'data',
+                optional: false,
+                type: 'array',
+                description: 'Entity data'
+              }
+            ]
+          },
+          delete: {
+            title: 'Delete entity',
+            description: 'Delete entity.',
+            callback: this.deleteItem.bind(this),
+            arguments: [
+              {
+                name: 'id',
+                source: {path: 0},
+                optional: false,
+                type: 'string',
+                description: 'Entity id'
+              }
+            ]
+          },
+          index: {
+            title: 'Index',
+            description: 'Fetch list of entities based on given criteria',
+            callback: this.indexList.bind(this),
+            arguments: [
+              {
+                name: 'limit',
+                source: {param: 'limit'},
+                optional: true,
+                type: 'string',
+                description: 'Limit'
+              }
+            ]
+          }          
         },
         actions: {},
         targeted_actions: {}
@@ -90,7 +153,7 @@ class ExampleResource extends Resource {
   }
 
   /**
-  * Retrieve item data.
+  * Retrieve entity data.
   *
   * @param args value with following keys:
   *   _req  Request object provided by express
@@ -100,13 +163,77 @@ class ExampleResource extends Resource {
   * @param callback
   */
   retrieveItem(args, callback) {
+    // Entity id will be available from args
+    let entityId = args.id;
+
+    // Send custom http error codes
+    if (isNaN(entityId))
+      this.setError(500, "Invalid entity id, it must be a number.")
+
+    // By default your endpoint will return HTTP status code 200 OK
     callback(null, {
       result: {
         "msg": "Hello, world!",
-        "requestedEntityId": args.id
+        "requestedEntityId": entityId
       }
     });
   }
+
+  /**
+  * Create entiy.
+  *
+  * @param args
+  * @param callback
+  */
+  createItem(args, callback) {
+    // Request payload data is passed for you 
+    let entityParams = args.entityData;
+
+    // Implement this functionality...
+    callback(null, {
+      result: false
+    });
+  }
+
+  /**
+  * Update entity.
+  *
+  * @param args
+  * @param callback
+  */
+  updateItem(args, callback) {
+    // Implement this functionality...  
+    callback(null, {
+      result: false
+    });
+  }
+
+  /**
+  * Delete entity.
+  *
+  * @param args
+  * @param callback
+  */
+  deleteItem(args, callback) {
+    // Implement this functionality...
+    callback(null, {
+      result: false
+    });
+  }
+
+  /*
+  * Index entities.
+  *
+  * @param args
+  * @param callback
+  */
+  indexList(args, callback) {
+    let entityIds = [];
+    // Implement this functionality...
+    callback(null, {
+      result: entityIds
+    });
+  }  
 }
 export default ExampleResource;
 ```

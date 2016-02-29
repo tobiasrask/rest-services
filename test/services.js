@@ -534,4 +534,231 @@ describe('RestServices', () => {
         done();
     })
   });
+
+  describe('Error responses and HTTP status codes', () => {
+    it('It should pass error data.', (done) => {
+
+      // Define probs
+      let serviceNameProb = 'testResource:';
+      let serviceLabelProb = 'Test API';
+      let servicePathProb = 'api';
+      let resourceIdProb = 'resource'
+
+      // Endpoint result tests
+      const resultTests = {
+        retrieve: {msg: 'retrieveProb:', code: 100},
+        create: {msg: 'createProb:', code: 200},
+        update: {msg: 'updateProb:', code: 301},
+        index: {msg: 'indexProb:', code: 400},
+        delete: {msg: 'deleteProb:', code: 404},
+        action: {msg: 'actionProb:', code: 500},
+        targetedAction: {msg: 'targetedActionProb:', code: 501}
+      }
+
+      const selectorTests = [
+        {
+          method: 'GET',
+          url: `/${servicePathProb}/${resourceIdProb}`,
+          assumeSelector: JSON.stringify({
+            type: 'operations',
+            operation: 'index'
+          }),
+          assumeResult: resultTests.index
+        },
+        {
+          method: 'POST',
+          url: `/${servicePathProb}/${resourceIdProb}`,
+          assumeSelector: JSON.stringify({
+            type: 'operations',
+            operation: 'create'
+          }),
+          assumeResult: resultTests.create
+        },
+        {
+          method: 'GET',
+          url: `/${servicePathProb}/${resourceIdProb}/1`,
+          assumeSelector: JSON.stringify({
+            type: 'operations',
+            operation: 'retrieve'
+          }),
+          assumeResult: resultTests.retrieve
+        },
+        {
+          method: 'PUT',
+          url: `/${servicePathProb}/${resourceIdProb}/1`,
+          assumeSelector: JSON.stringify({
+            type: 'operations',
+            operation: 'update'
+          }),
+          assumeResult: resultTests.update
+        },
+        {
+          method: 'POST',
+          url: `/${servicePathProb}/${resourceIdProb}/someAction`,
+          assumeSelector: JSON.stringify({
+            type: 'actions',
+            operation: 'actionName'
+          }),
+          assumeResult: resultTests.action
+        },
+        {
+          method: 'POST',
+          url: `/${servicePathProb}/${resourceIdProb}/1/someTargettedAction`,
+          assumeSelector: JSON.stringify({
+            type: 'targeted_actions',
+            operation: 'targetActionName'
+          }),
+          assumeResult: resultTests.targetedAction
+        },
+      ];
+
+      // Test resource stub
+      class TestResource extends Resource {
+        getInitialState() {
+          return {
+            props: {
+              resource_id: resourceIdProb
+            },
+            resource_definition: {
+              operations: {
+                retrieve: {
+                  title: '',
+                  description: '',
+                  callback: (args, callback) => {
+                    let item = resultTests.retrieve;
+                    callback(this.setError(item.code, item.msg));
+                  },
+                  arguments: [
+                    {
+                      name: 'id',
+                      source: {path: 0},
+                      optional: false,
+                      type: 'string',
+                      description: 'Entity id'
+                    }
+                  ]
+                },
+                create: {
+                  title: '',
+                  description: '',
+                  callback: (args, callback) => {
+                    let item = resultTests.create;
+                    callback(this.setError(item.code, item.msg));
+                  },
+                  arguments: []
+                },
+                update: {
+                  title: '',
+                  description: '',
+                  callback: (args, callback) => {
+                    let item = resultTests.update;
+                    callback(this.setError(item.code, item.msg));
+                  },
+                  arguments: [
+                    {
+                      name: 'id',
+                      source: {path: 0},
+                      optional: false,
+                      type: 'string',
+                      description: 'Entity id'
+                    }
+                  ]
+                },
+                delete: {
+                  title: '',
+                  description: '',
+                  callback: (args, callback) => {
+                    let item = resultTests.delete;
+                    callback(this.setError(item.code, item.msg));
+                  },
+                  arguments: [
+                    {
+                      name: 'id',
+                      source: {path: 0},
+                      optional: false,
+                      type: 'string',
+                      description: 'Entiy id'
+                    }
+                  ]
+                },
+                index: {
+                  title: '',
+                  description: '',
+                  callback: (args, callback) => {
+                    let item = resultTests.index;
+                    callback(this.setError(item.code, item.msg));
+                  },
+                  arguments: []
+                }
+              },
+              actions: {
+                someAction: {
+                  title: '',
+                  description: '',
+                  callback: (args, callback) => {
+                    let item = resultTests.action;
+                    callback(this.setError(item.code, item.msg));
+                  },
+                  arguments: []
+                }          
+              },
+              targeted_actions: {
+                someTargettedAction: {
+                  title: '',
+                  description: '',
+                  callback: (args, callback) => {
+                    let item = resultTests.targetedAction;
+                    callback(this.setError(item.code, item.msg));
+                  },
+                  arguments: []
+                }                 
+              }
+            }
+          };
+        }
+      }
+
+      const config = {
+        services: [
+          {
+            serviceName: serviceNameProb,
+            serviceLabel: serviceLabelProb,
+            servicePath: servicePathProb,
+            resources: [
+              TestResource
+            ]
+          }
+        ]
+      }
+
+      var restServices = new RestServices(config);
+      let service = restServices.getServiceByName(serviceNameProb)
+      let errors = [];
+
+      // Test for selector selection
+      selectorTests.map(item => {
+        let req = {
+          method: item.method,
+          originalUrl: item.url
+        }
+
+        service.lookup(req, {}, (err, output) => {
+          if (!err)
+            return errors.push(new Error(`It should return error ${item.url}`));
+          
+          // Validate error code
+          if (err.code !== item.assumeResult.code)
+            errors.push(new Error(`Unexpected error code ${item.url}`));
+
+          if (err.toString() !== "Error: " + item.assumeResult.msg)
+            errors.push(new Error(`Unexpected error message ${item.url}`));
+        });
+      });
+
+      if (errors.length > 0)
+        done(errors[0]);
+      else 
+        done();
+    })
+  });
 });

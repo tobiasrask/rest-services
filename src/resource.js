@@ -148,6 +148,22 @@ class Resource {
   cacheControlEnabled(selector) {
     return false;
   }
+
+  /**
+  * Create error to be passed for services handler. Usually we just bind HTTP
+  * status code and related message. Method can be used also with normal errors,
+  * which will be wrapped and passed.
+  *
+  * @param code
+  * @param message or Error object
+  * @return error
+  */
+  setError(code, message) {
+    var error = typeof message === 'string' ? 
+      new Error(message) : message;
+    error.code = code;
+    return error;
+  }
 }
 
 export default Resource;
