@@ -238,7 +238,7 @@ class ExampleResource extends Resource {
 export default ExampleResource;
 ```
 
-Now start your server and open url: http://127.0.0.1:3000/api/example/test.
+Now start your server and open your browser with url: http://127.0.0.1:3000/api/example/test.
 You will see json response from server:
 
 ```js
@@ -270,12 +270,12 @@ You can define three different types of resource mappings:
 
 Operations
 ----------
-Supported CRUD+index operations and corresponding http methods are:
-- create (POST)
-- retrieve (GET)
-- update (PUT)
-- delete (DELETE)
-- index (GET)
+Supported CRUD+index operations and corresponding HTTP methods are:
+- Create (POST)
+- Retrieve (GET)
+- Update (PUT)
+- Delete (DELETE)
+- Index (GET)
 
 In our example these would be:
 
@@ -314,7 +314,7 @@ In our example we defined one parameter named *id* to be retrieved from url path
       source: {param: 'limit'},
       optional: true,
       type: 'string',
-      description: 'Limit from query string'
+      description: 'Limit will be fetched from query string'
     },
     {
       name: 'item',
