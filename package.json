@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/tobiasrask/rest-services.git"
   },
+  "keywords": [
+    "rest",
+    "resources"
+  ],
   "author": "Tobias Rask",
   "license": "MIT",
   "bugs": {

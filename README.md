@@ -63,9 +63,7 @@ class ExampleResource extends Resource {
   */
   getInitialState() {
     return {
-      props: {
-        resource_id: 'example'
-      },
+      resource_id: 'example',
       resource_definition: {
         operations: {
           retrieve: {
@@ -410,6 +408,13 @@ In our example we defined one parameter named *id* to be retrieved from url path
 
 ### Security
 Note that your API might need additional protection because of [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). We will cover this documentation in near future.
+
+### Test
+Run tests by npm:
+
+```js
+npm run test
+```
 
 ### Need more infromation?
 This module is inspired by Drupal's Services module. Feel free to comment and leave issues.

@@ -18,6 +18,9 @@ class Resource {
     if (variables.hasOwnProperty('context'))
       this._registry.set('properties', 'context', variables.context);
 
+    if (variables.hasOwnProperty('serviceSettings'))
+      this._registry.set('properties', 'serviceSettings', variables.serviceSettings);
+
     this._registry.set('properties', 'state', this.getInitialState());
   }
 
@@ -29,7 +32,7 @@ class Resource {
   getInitialState() {
     return {
       props: {
-        resource_id: false
+        resource_id: false,        
       },
       resource_definition: {
         operations: {},
@@ -51,43 +54,6 @@ class Resource {
   }
 
   /**
-  * Create item
-  *
-  * @param data
-  */
-  create(data) {
-
-  }
-
-  /**
-  * Read item.
-  *
-  * @param id
-  */
-  read(id) {
-
-  }
-
-  /**
-  * Update item.
-  *
-  * @param id
-  * @param data
-  */
-  update(id, data) {
-
-  }
-
-  /**
-  * Delete item.
-  *
-  * @param id
-  */
-  del(id) {
-
-  }
-
-  /**
   * Resource enabled
   *
   * @param selector
@@ -95,7 +61,7 @@ class Resource {
   *   method
   */
   resourceEnabled(selector) {
-    // TODO: fix to use app.config
+    // TODO
     return true;
   }
 
@@ -124,7 +90,35 @@ class Resource {
   */
   getResourceID() {
     let state = this._registry.get('properties', 'state');
-    return state.props.resource_id;
+
+    if (state.hasOwnProperty('resource_id'))
+      return state.resource_id;
+
+    // Old notation
+    if (state.hasOwnProperty('props') &&
+        state.props.hasOwnProperty('resource_id'))
+      return state.props.resource_id;
+
+    throw "Resource id is not defined";
+  }
+
+  /**
+  * Returns cors options
+  *
+  * @return cors
+  */
+  getResourceCORS() {
+    // Local settings
+    let state = this._registry.get('properties', 'state');
+    if (state.hasOwnProperty('cors'))
+      return state.cors;
+
+    // Global settings
+    state = this._registry.get('properties', 'serviceSettings');
+    if (state.hasOwnProperty('cors'))
+      return state.cors;
+
+    return false;
   }
 
 
@@ -147,6 +141,50 @@ class Resource {
   */
   cacheControlEnabled(selector) {
     return false;
+  }
+
+  /**
+  * Handle CORS request.
+  *
+  * @param args
+  * @param callback
+  */
+  accessControlCORS(req, res, callback) {
+    let corsOptions = this.getResourceCORS();
+
+    // If CORS is not defined, we skip this
+    if (!corsOptions)
+      return callback(null);
+
+    let corsAllowAll = corsOptions.hasOwnProperty('dangerouslyAllowAll') ?
+      corsOptions.dangerouslyAllowAll : false;
+
+    let allowedOrigins = corsOptions.hasOwnProperty('allowedOrigins') ?
+      corsOptions.allowedOrigins : [];
+
+    var origin = req.get('Origin');
+
+    if (origin !== undefined) {
+      if (corsAllowAll || allowedOrigins.indexOf(origin) >= 0) {
+        res.header("Access-Control-Allow-Origin", origin);
+        res.header("Vary", "Origin");
+      }
+    } else if (corsAllowAll) {
+      res.header("Access-Control-Allow-Origin", "*");
+    }
+
+    // Send headers
+    if (corsOptions.hasOwnProperty('responseHeaders')) {
+      corsOptions.responseHeaders.map(header => {
+        res.header(header.key, header.value);
+      });
+    }
+
+    // Send OPTIONS
+    if (req.method.toLowerCase() === "options")
+      return res.sendStatus(204);
+
+    return callback(null);
   }
 
   /**

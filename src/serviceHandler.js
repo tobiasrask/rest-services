@@ -18,9 +18,13 @@ class ServiceHandler {
     this._registry = new DomainMap();
 
     if (!options.hasOwnProperty('resources')) options.resources = [];
+    if (!options.hasOwnProperty('settings')) options.settings = [];
 
     options.resources.map(Resource => {
-      var resource = new Resource({context: 'server'});
+      var resource = new Resource({
+        context: 'server',
+        serviceSettings: options.settings
+      });
       this._registry.set('resources', resource.getResourceID(), resource);
       self._master.log(`Resource ${resource.getResourceID()} registered`);
     });
@@ -94,39 +98,44 @@ class ServiceHandler {
     if (!resource.resourceEnabled(selector))
       return callback(self.buildError(500, "Resource is not available"));
 
-    // Fetch resource info and preprocess incoming arguments
-    var endpoint = resource.getEndpointInfo(selector);
-    if (!endpoint)
-      return callback(self.buildError(404, "Resource endpoint not found"));
+    // Handle request CORS methods
+    resource.accessControlCORS(req, res, err => {
+      if (err) callback(self.buildError(500, "CORS error"));
 
-    // Build arguments for resource
-    var args = this.processArguments(req, urlInfo, endpoint.arguments);
-    
-    if (!args)
-      return callback(self.buildError(400, "Unable to process resource arguments"));
-    
-    args._req = req;
-    args._res = res;
+      // Fetch resource info and preprocess incoming arguments
+      var endpoint = resource.getEndpointInfo(selector);
+      if (!endpoint)
+        return callback(self.buildError(404, "Resource endpoint not found"));
 
-    self._master.log(`Executing '${selector.type}' / '${selector.operation}'`);
+      // Build arguments for resource
+      var args = this.processArguments(req, urlInfo, endpoint.arguments);
+      
+      if (!args)
+        return callback(self.buildError(400, "Unable to process resource arguments"));
 
-    // Hook lookupAlter()
-    self.lookupAlter(endpoint, selector, args, err => {
+      args._req = req;
+      args._res = res;
 
-      // Hook endpointAccess()
-      self.endpointAccess(endpoint, selector, args, (err, hasAccess) => {
-         if (err)
-          return callback(err);
-         else if (!hasAccess)
-          return callback(self.buildError(401, "Access to this endpoint is denied"));
+      self._master.log(`Executing '${selector.type}' / '${selector.operation}'`);
 
-        // Hook cacheControlEnabled()
-        var cache_control = resource.cacheControlEnabled(selector);
-        if (cache_control)
-          res.locals._cache_control = cache_control;
+      // Hook lookupAlter()
+      self.lookupAlter(endpoint, selector, args, err => {
 
-        // Pass execution to endpoint
-        endpoint.callback(args, callback);
+        // Hook endpointAccess()
+        self.endpointAccess(endpoint, selector, args, (err, hasAccess) => {
+          if (err)
+            return callback(err);
+          else if (!hasAccess)
+            return callback(self.buildError(401, "Access to this endpoint is denied"));
+
+          // Hook cacheControlEnabled()
+          var cache_control = resource.cacheControlEnabled(selector);
+          if (cache_control)
+            res.locals._cache_control = cache_control;
+
+          // Pass execution to endpoint
+          endpoint.callback(args, callback);
+        });
       });
     });
   }
@@ -206,6 +215,13 @@ class ServiceHandler {
         selector = {
           type: "operations",
           operation: "delete"
+        }
+      }
+    } else if (urlInfo.method == 'OPTIONS') {
+      if (urlInfo.resource_identifier !== undefined) {
+        selector = {
+          type: "operations",
+          operation: "options"
         }
       }
     }
