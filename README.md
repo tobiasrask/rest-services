@@ -194,7 +194,7 @@ In our example we defined one parameter named *id* to be retrieved from url path
   ]
 ```
 
-#### HTTP access control (CORS)
+#### HTTP Access Control (CORS)
 If your endpoint will be called from other domain than servers own domain, you need to enable CORS support for [preflight requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS). You can provide default CORS settings for the **Service** or for a single **Resource**. 
 
 Enable CORS by defining key **allowedOrigins** with list of allowed origins. Following example demonstrates how to allow CORS request from certain domain:
