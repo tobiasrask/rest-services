@@ -242,7 +242,7 @@ const config = {
 }
 var services = new RestServices(config);
 ```
-Note that in previous example we also provided a list of CORS response headers to allow better caching.
+Note that in previous example we also provided a list of response headers to allow better caching of preflight requests.
 
 If you are sure that there is no any security issues with your endpoints, you can allow CORS requests from any domain by giving argument **dangerouslyAllowAll: true**.
 
