@@ -406,6 +406,106 @@ In our example we defined one parameter named *id* to be retrieved from url path
   ]
 ```
 
+HTTP access control (CORS)
+--------------------------
+If your endpoint will be called from other domain than servers own domain, you need to enable CORS support for preflight requests. You can provide default CORS settings for the **Service** or for a single **Resource**. 
+
+Enable CORS by defining key **allowedOrigins** with list of allowed origins. Following example demonstrates how to allow CORS request from certain domain:
+
+```js
+// server.js
+
+// Enable CORS support for service level
+const config = {
+  services: [
+    {
+      serviceName: "example",
+      serviceLabel: "Example API",
+      servicePath: "api",
+      settings: {
+        cors: {
+          allowedOrigins: [
+            "https://www.npmjs.com/package/rest-services"
+          ],
+          responseHeaders: [
+            {
+              key: "Access-Control-Allow-Methods",
+              value: "POST, GET, OPTIONS, PUT, DELETE"
+            },
+            {
+              key: "Access-Control-Allow-Headers",
+              value: "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With"
+            },
+            {
+              key: "Access-Control-Max-Age",
+              value: "1728000"
+            },
+            {
+              key: "Access-Control-Allow-Credentials",
+              value: "true"
+            }
+          ]
+        }
+      },
+      resources: [
+        ...
+      ]
+    }
+  ]
+}
+var services = new RestServices(config);
+```
+Note that in previous example we also provided a list of CORS response headers to allow better caching.
+
+If you are sure that there is no any security issues with your endpoints, you can allow CORS requests from any domain by giving argument **dangerouslyAllowAll: true**.
+
+```js
+// server.js
+
+// Enable CORS for all domains
+const config = {
+  services: [
+    {
+      serviceName: "example",
+      serviceLabel: "Example API",
+      servicePath: "api",
+      settings: {
+        cors: {
+          dangerouslyAllowAll: true
+        }
+      },
+      resources: [
+        ...
+      ]
+    }
+  ]
+}
+```
+
+If there is no reason to allow preflight requests for all resource, you can limit support for only certain endpoint:
+```js
+// example-resource.js
+import {Resource} from 'rest-services'
+
+class ExampleResource extends Resource {
+  
+  getInitialState() {
+    return {
+      resource_id: 'example',
+      cors: {
+        allowedOrigins: [
+          "https://www.npmjs.com/package/rest-services"
+        ]
+      },
+      resource_definition: {
+        ...
+      }
+    }
+  }
+}
+```
+
+
 ### Security
 Note that your API might need additional protection because of [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). We will cover this documentation in near future.
 
