@@ -324,8 +324,8 @@ You will see json response from server:
 }
 ```
 
-### Documentation
-
+Documentation
+-------------
 Our example above was one simple use case. Now let's talk about how it really works.
 
 #### Services
