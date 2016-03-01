@@ -410,7 +410,7 @@ In our example we defined one parameter named *id* to be retrieved from url path
 Note that your API might need additional protection because of [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). We will cover this documentation in near future.
 
 ### Test
-Using [npm](https://www.npmjs.com/):
+Run tests using [npm](https://www.npmjs.com/):
 
     $ npm run test
 
