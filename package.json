@@ -1,6 +1,6 @@
 {
   "name": "rest-services",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "RESTful services for Express.js.",
   "main": "lib/index.js",
   "scripts": {
@@ -30,5 +30,5 @@
   },
   "dependencies": {
     "domain-map": "0.0.6"
-  } 
+  }
 }
