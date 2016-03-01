@@ -1,5 +1,5 @@
 # rest-services
-[rest-services](https://www.npmjs.org/package/rest-services): provides easy to use RESTful API for [express](https://www.npmjs.com/package/express).
+[rest-services](https://www.npmjs.org/package/rest-services) provides easy to use RESTful API for [express](https://www.npmjs.com/package/express).
 
 Build your [RESTful API](https://en.wikipedia.org/wiki/Representational_state_transfer) by defining one or more Services with list of Resources.
 
