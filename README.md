@@ -410,11 +410,9 @@ In our example we defined one parameter named *id* to be retrieved from url path
 Note that your API might need additional protection because of [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). We will cover this documentation in near future.
 
 ### Test
-Run tests by npm:
+Using [npm](https://www.npmjs.com/):
 
-```js
-npm run test
-```
+    $ npm run test
 
 ### Need more infromation?
 This module is inspired by Drupal's Services module. Feel free to comment and leave issues.
