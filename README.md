@@ -123,13 +123,10 @@ Documentation
 Our example above was one simple use case. Now let's talk about how it really works.
 
 ### Services
-At first we define **Service** for our app. In our example we defined **Example API Service**, which is listening url **/api**.
+Frst we define **Service** for our app. In our example we defined **Example API Service**, which is listening url **/api**.
 You can have multiple services if you like, they all have unique paths.
 
-At the moment all reponses are returned with pure JSON.
-
-If you need to alter services response data or format, just extend **RestServices** class and implement *sendResponse(err, req, res, response)* method. We will cover this documentation in near future.
-
+At the moment all reponses are returned with pure JSON. If you need to alter services response data or format, just extend **RestServices** class and implement *sendResponse(err, req, res, response)* method. We will cover this documentation in near future.
 
 ### Resources
 We need to define the **Resource(s)** to be used with our **Service**. In our example we defined **ExampleResource** with id **example**.
@@ -157,7 +154,7 @@ In our example these would be:
 - Index items: GET /api/example
 
 #### Actions and targeted actions
-Each endpoint can have unlimited number of actions and targeted actions. Both actions are executed by HTTP POST request. The difference between these two action types is that actions are general, targeted actions are *targeted* for certain *entity id*.
+Each endpoint can have unlimited number of actions and targeted actions. Both actions are executed by HTTP POST request. The key difference between these two action types is that *actions* are general, whereas *targeted actions* are *targeted* for certain *entity id*.
 - Action (POST)
 - Targeted action (POST)
 
