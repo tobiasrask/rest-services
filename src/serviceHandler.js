@@ -147,19 +147,19 @@ class ServiceHandler {
   * @return urlInfo
   */
   getUrlInfo(req) {
-    let base_index = 0;
-    let parsed_url = url.parse(req.originalUrl);
-    let url_parts = parsed_url.pathname.split("/");
+    let baseIndex = 0;
+    let parsedUrl = url.parse(req.originalUrl);
+    let urlParts = parsedUrl.pathname.split("/");
     return {
       method: req.method,
       originalUrl: req.originalUrl,
-      parsed_url: parsed_url,
-      url_parts: url_parts,
-      base_index: base_index,
-      service_domain: url_parts[base_index + 1],
-      resourceId: url_parts[base_index + 2],
-      resource_identifier: url_parts[base_index + 3],
-      resource_specifier: url_parts[base_index + 4]
+      parsedUrl: parsedUrl,
+      urlParts: urlParts,
+      baseIndex: baseIndex,
+      service_domain: urlParts[baseIndex + 1],
+      resourceId: urlParts[baseIndex + 2],
+      resourceIdentifier: urlParts[baseIndex + 3],
+      resourceSpecifier: urlParts[baseIndex + 4]
     };
   }
 
@@ -174,7 +174,7 @@ class ServiceHandler {
     var selector = false;
 
     if (urlInfo.method == "GET") {
-      if (urlInfo.resource_identifier !== undefined) {
+      if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
           type: "operations",
           operation: "retrieve"
@@ -186,16 +186,16 @@ class ServiceHandler {
         }
       }
     } else if (urlInfo.method == "POST") {
-      if (urlInfo.resource_identifier !== undefined &&
-          urlInfo.resource_specifier !== undefined) {
+      if (urlInfo.resourceIdentifier !== undefined &&
+          urlInfo.resourceSpecifier !== undefined) {
         selector = {
-          type: "targeted_actions",
-          operation: urlInfo.resource_specifier
+          type: "targetedActions",
+          operation: urlInfo.resourceSpecifier
         }
-      } else if (urlInfo.resource_identifier !== undefined) {
+      } else if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
           type: "actions",
-          operation: urlInfo.resource_identifier
+          operation: urlInfo.resourceIdentifier
         }
       } else {
         selector = {
@@ -204,21 +204,21 @@ class ServiceHandler {
         }
       }
     } else if (urlInfo.method == 'PUT') {
-      if (urlInfo.resource_identifier !== undefined) {
+      if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
           type: "operations",
           operation: "update"
         }
       }
     } else if (urlInfo.method == 'DELETE') {
-      if (urlInfo.resource_identifier !== undefined) {
+      if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
           type: "operations",
           operation: "delete"
         }
       }
     } else if (urlInfo.method == 'OPTIONS') {
-      if (urlInfo.resource_identifier !== undefined) {
+      if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
           type: "operations",
           operation: "options"
@@ -254,8 +254,8 @@ class ServiceHandler {
       
       let name = defArg.hasOwnProperty('name') ? defArg['name'] : null;
       
-      let value = defArg.hasOwnProperty('default_value') ?
-          defArg.default_value : null;
+      let value = defArg.hasOwnProperty('defaultValue') ?
+          defArg.defaultValue : null;
 
       if (name == null || source == null) {
         self._master.log("services_handler",
@@ -270,8 +270,8 @@ class ServiceHandler {
       } else {
         if (source.hasOwnProperty('path')) {
           // Url path
-          let url_position = urlInfo.base_index + 3 + source.path;
-          value = urlInfo.url_parts[url_position];
+          let url_position = urlInfo.baseIndex + 3 + source.path;
+          value = urlInfo.urlParts[url_position];
 
         } else if (source.hasOwnProperty('param')) {
           // Url query parameter

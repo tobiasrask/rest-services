@@ -62,8 +62,8 @@ class ExampleResource extends Resource {
   */
   getInitialState() {
     return {
-      resource_id: 'example',
-      resource_definition: {
+      resourceId: 'example',
+      resourceDefinition: {
         operations: {
           retrieve: {
             title: 'Retrieve entity',
@@ -81,7 +81,7 @@ class ExampleResource extends Resource {
           }        
         },
         actions: {},
-        targeted_actions: {}
+        targetedActions: {}
       }
     };
   }
@@ -278,13 +278,13 @@ class ExampleResource extends Resource {
   
   getInitialState() {
     return {
-      resource_id: 'example',
+      resourceId: 'example',
       cors: {
         allowedOrigins: [
           "https://www.npmjs.com/package/rest-services"
         ]
       },
-      resource_definition: {
+      resourceDefinition: {
         ...
       }
     }
@@ -314,8 +314,8 @@ class ExampleResource extends Resource {
   */
   getInitialState() {
     return {
-      resource_id: 'example',
-      resource_definition: {
+      resourceId: 'example',
+      resourceDefinition: {
         operations: {
           retrieve: {
             title: 'Retrieve entity',
@@ -411,7 +411,7 @@ class ExampleResource extends Resource {
             ]
           }
         },
-        targeted_actions: {
+        targetedActions: {
           subscribe: {
             title: "Subscribe to entity modifications",
             description: "Subscribe to get news from this entity modifications",

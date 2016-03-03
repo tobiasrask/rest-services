@@ -104,15 +104,15 @@ class RestServices {
   */
   sendResponse(err, req, res, response) {
     // TODO: Check headers to get preferred format
-    var response_format = "json";
+    var responseFormat = "json";
     if (err) {
       var hsc = err.hasOwnProperty('code') ? err.code : 500;
       res.status(hsc).send(err.message);
 
     } else {
-      if (response_format == "jsonp") {
+      if (responseFormat == "jsonp") {
         res.jsonp(response.result);
-      } else if (response_format == "json") {
+      } else if (responseFormat == "json") {
         res.json(response.result);
       } else {
         // Unknown response format

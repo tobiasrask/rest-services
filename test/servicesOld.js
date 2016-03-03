@@ -1,7 +1,7 @@
 import {RestServices, Resource} from "./../src/index"
 import assert from "assert";
 
-describe('RestServices', () => {
+describe('RestServicesOldAPI', () => {
 
   describe('Test initialization', () => {
     it('It should initialize services without errors', (done) => {
@@ -16,11 +16,13 @@ describe('RestServices', () => {
       class TestResource extends Resource {
         getInitialState() {
           return {
-            resourceId: resourceIdProb,
-            resourceDefinition: {
+            props: {
+              resource_id: resourceIdProb
+            },
+            resource_definition: {
               operations: {},
               actions: {},
-              targetedActions: {}
+              targeted_actions: {}
             }
           };
         }
@@ -134,11 +136,13 @@ describe('RestServices', () => {
       class TestResource extends Resource {
         getInitialState() {
           return {
-            resourceId: resourceIdProb,
-            resourceDefinition: {
+            props: {
+              resource_id: resourceIdProb
+            },
+            resource_definition: {
               operations: {},
               actions: {},
-              targetedActions: {}
+              targeted_actions: {}
             }
           };
         }
@@ -241,7 +245,7 @@ describe('RestServices', () => {
           method: 'POST',
           url: `/${servicePathProb}/${resourceIdProb}/1/targetActionName`,
           assumeSelector: JSON.stringify({
-            type: 'targetedActions',
+            type: 'targeted_actions',
             operation: 'targetActionName'
           })
         },
@@ -251,11 +255,13 @@ describe('RestServices', () => {
       class TestResource extends Resource {
         getInitialState() {
           return {
-            resourceId: resourceIdProb,
-            resourceDefinition: {
+            props: {
+              resource_id: resourceIdProb
+            },
+            resource_definition: {
               operations: {},
               actions: {},
-              targetedActions: {}
+              targeted_actions: {}
             }
           };
         }
@@ -369,7 +375,7 @@ describe('RestServices', () => {
           method: 'POST',
           url: `/${servicePathProb}/${resourceIdProb}/1/someTargettedAction`,
           assumeSelector: JSON.stringify({
-            type: 'targetedActions',
+            type: 'targeted_actions',
             operation: 'targetActionName'
           }),
           assumeResult: resultTests.targetedAction
@@ -380,8 +386,10 @@ describe('RestServices', () => {
       class TestResource extends Resource {
         getInitialState() {
           return {
-            resourceId: resourceIdProb,
-            resourceDefinition: {
+            props: {
+              resource_id: resourceIdProb
+            },
+            resource_definition: {
               operations: {
                 retrieve: {
                   title: '',
@@ -470,7 +478,7 @@ describe('RestServices', () => {
                   arguments: []
                 }          
               },
-              targetedActions: {
+              targeted_actions: {
                 someTargettedAction: {
                   title: '',
                   description: '',
@@ -597,7 +605,7 @@ describe('RestServices', () => {
           method: 'POST',
           url: `/${servicePathProb}/${resourceIdProb}/1/someTargettedAction`,
           assumeSelector: JSON.stringify({
-            type: 'targetedActions',
+            type: 'targeted_actions',
             operation: 'targetActionName'
           }),
           assumeResult: resultTests.targetedAction
@@ -608,8 +616,10 @@ describe('RestServices', () => {
       class TestResource extends Resource {
         getInitialState() {
           return {
-            resourceId: resourceIdProb,
-            resourceDefinition: {
+            props: {
+              resource_id: resourceIdProb
+            },
+            resource_definition: {
               operations: {
                 retrieve: {
                   title: '',
@@ -692,7 +702,7 @@ describe('RestServices', () => {
                   arguments: []
                 }          
               },
-              targetedActions: {
+              targeted_actions: {
                 someTargettedAction: {
                   title: '',
                   description: '',

@@ -21,7 +21,24 @@ class Resource {
     if (variables.hasOwnProperty('serviceSettings'))
       this._registry.set('properties', 'serviceSettings', variables.serviceSettings);
 
-    this._registry.set('properties', 'state', this.getInitialState());
+    let state = this.getInitialState();
+
+    // Support old notation
+    if (state.hasOwnProperty('props') &&
+        state.props.hasOwnProperty('resource_id')) {
+      state.resourceId = state.props.resource_id;
+    }
+    if (state.hasOwnProperty('resource_definition')) {
+      state.resourceDefinition = state.resource_definition;
+      delete state.resource_definition;
+    }
+    if (state.hasOwnProperty('resourceDefinition') &&
+        state.resourceDefinition.hasOwnProperty('targeted_actions') ) {
+      state.resourceDefinition.targetedActions = state.resourceDefinition.targeted_actions;
+      delete state.resourceDefinition.targeted_actions;
+    }
+
+    this._registry.set('properties', 'state', state);
   }
 
   /**
@@ -31,13 +48,11 @@ class Resource {
   */
   getInitialState() {
     return {
-      props: {
-        resource_id: false,        
-      },
-      resource_definition: {
+      resourceId: false,
+      resourceDefinition: {
         operations: {},
         actions: {},
-        targeted_actions: {}
+        targetedActions: {}
       }
     };
   }
@@ -77,10 +92,12 @@ class Resource {
   */
   getEndpointInfo(selector) {
     const {type, operation} = selector;
-    let state = this._registry.get('properties', 'state');
-    return (state.resource_definition.hasOwnProperty(type) &&
-            state.resource_definition[type].hasOwnProperty(operation)) ?
-                state.resource_definition[type][operation] : false;
+
+    let resourceDefinition = this.resourceDefinition();
+    
+    return (resourceDefinition.hasOwnProperty(type) &&
+            resourceDefinition[type].hasOwnProperty(operation)) ?
+                resourceDefinition[type][operation] : false;
   }
 
   /**
@@ -91,13 +108,8 @@ class Resource {
   getResourceID() {
     let state = this._registry.get('properties', 'state');
 
-    if (state.hasOwnProperty('resource_id'))
-      return state.resource_id;
-
-    // Old notation
-    if (state.hasOwnProperty('props') &&
-        state.props.hasOwnProperty('resource_id'))
-      return state.props.resource_id;
+    if (state.hasOwnProperty('resourceId'))
+      return state.resourceId;
 
     throw "Resource id is not defined";
   }
@@ -130,7 +142,7 @@ class Resource {
   */
   resourceDefinition() {
     let state = this._registry.get('properties', 'state');
-    return state.resource_definition;
+    return state.resourceDefinition;
   }
 
   /**
