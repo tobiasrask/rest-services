@@ -29,6 +29,6 @@
     "mocha": "^2.4.5"
   },
   "dependencies": {
-    "domain-map": "0.0.6"
+    "domain-map": "0.0.8"
   }
 }
