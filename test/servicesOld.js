@@ -64,6 +64,65 @@ describe('RestServicesOldAPI', () => {
     })
   });
 
+  describe('Test initialization with v0.1.2', () => {
+    it('It should initialize services without errors', (done) => {
+
+      // Define probs
+      let serviceNameProb = 'testResource:';
+      let serviceLabelProb = 'Test API';
+      let servicePathProb = 'api:';
+      let resourceIdProb = 'resourceId:'
+
+      // Test resource stub
+      class TestResource extends Resource {
+        getInitialState() {
+          return {
+            resource_id: resourceIdProb,
+            resource_definition: {
+              operations: {},
+              actions: {},
+              targeted_actions: {}
+            }
+          };
+        }
+      }
+
+      const config = {
+        services: [
+          {
+            serviceName: serviceNameProb,
+            serviceLabel: serviceLabelProb,
+            servicePath: servicePathProb,
+            resources: [
+              TestResource
+            ]
+          }
+        ]
+      }
+
+      var restServices = new RestServices(config);
+      let service = restServices.getServiceByName(serviceNameProb)
+
+      if (!service)
+        return done(new Error("It didn't return service"));
+
+      if (service.getServiceName() != serviceNameProb)
+        return done(new Error("Service name was not initialized appropriate"));
+
+      if (service.getServicePath() != servicePathProb)
+        return done(new Error("Service path was not initialized appropriate"));
+
+      let resourceInstance = service.getResource(resourceIdProb);
+      if (!resourceInstance)
+        return done(new Error("It didn't return resource by id"));
+
+      if (resourceInstance.getResourceID() != resourceIdProb)
+        return done(new Error("Resource id doesn't match"));
+
+      done();
+    })
+  });
+
   describe('Test service selectors', () => {
     it('It should select correct selectors for lookup', (done) => {
 

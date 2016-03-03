@@ -28,6 +28,9 @@ class Resource {
         state.props.hasOwnProperty('resource_id')) {
       state.resourceId = state.props.resource_id;
     }
+    if (state.hasOwnProperty('resource_id')) {
+      state.resourceId = state.resource_id;
+    }
     if (state.hasOwnProperty('resource_definition')) {
       state.resourceDefinition = state.resource_definition;
       delete state.resource_definition;
