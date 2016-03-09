@@ -10,9 +10,7 @@ class Resource {
   *
   * @param variables
   */
-  constructor(variables) {
-    if (variables == undefined) variables = {};
-
+  constructor(variables = {}) {
     this._registry = new DomainMap();
 
     if (variables.hasOwnProperty('context'))

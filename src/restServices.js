@@ -10,9 +10,7 @@ class RestServices {
   *
   * @param configuration
   */
-  constructor(configuration) {
-    if (configuration === undefined) configuration = {};
-
+  constructor(configuration = {}) {
     this._registry = new DomainMap();
 
     let debug = configuration.hasOwnProperty('debug') ?
