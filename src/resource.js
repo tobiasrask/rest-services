@@ -82,7 +82,7 @@ class Resource {
   }
 
   /**
-  * Method returns resource info for requested operation.  
+  * Method returns resource info for requested operation.
   *
   * @param selectorwith keys type & method
   * - type
@@ -95,7 +95,7 @@ class Resource {
     const {type, operation} = selector;
 
     let resourceDefinition = this.resourceDefinition();
-    
+
     return (resourceDefinition.hasOwnProperty(type) &&
             resourceDefinition[type].hasOwnProperty(operation)) ?
                 resourceDefinition[type][operation] : false;
@@ -210,7 +210,7 @@ class Resource {
   * @return error
   */
   setError(code, message) {
-    var error = typeof message === 'string' ? 
+    var error = typeof message === 'string' ?
       new Error(message) : message;
     error.code = code;
     return error;

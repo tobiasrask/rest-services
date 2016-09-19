@@ -109,12 +109,13 @@ class ServiceHandler {
 
       // Build arguments for resource
       var args = this.processArguments(req, urlInfo, endpoint.arguments);
-      
+
       if (!args)
         return callback(self.buildError(400, "Unable to process resource arguments"));
 
       args._req = req;
       args._res = res;
+      args._urlInfo = urlInfo;
 
       self._master.log(`Executing '${selector.type}' / '${selector.operation}'`);
 
@@ -247,13 +248,13 @@ class ServiceHandler {
 
       let optional = defArg.hasOwnProperty('optional') ?
         defArg['optional'] : false;
-      
+
       let type = defArg.hasOwnProperty('type') ? defArg['type'] : null;
-      
+
       let source = defArg.hasOwnProperty('source') ? defArg['source'] : null;
-      
+
       let name = defArg.hasOwnProperty('name') ? defArg['name'] : null;
-      
+
       let value = defArg.hasOwnProperty('defaultValue') ?
           defArg.defaultValue : null;
 
@@ -310,7 +311,7 @@ class ServiceHandler {
   * @param endpoint
   * @param selector
   * @param args
-  * @param callback 
+  * @param callback
   */
   lookupAlter(endpoint, selector, args, callback) {
     callback(null);

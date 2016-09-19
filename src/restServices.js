@@ -17,7 +17,7 @@ class RestServices {
       configuration.debug : false;
 
     this._registry.set('properties', 'debug', debug);
-    
+
     this.loadServices(configuration);
   }
 
@@ -85,7 +85,7 @@ class RestServices {
           serviceHandler.lookup(req, res, function(err, response) {
             // Allow altering response sending
             self.sendResponse(err, req, res, response);
-          }); 
+          });
         });
       });
     });
