@@ -134,6 +134,24 @@ class Resource {
     return false;
   }
 
+  /**
+  * Returns CSRF options
+  *
+  * @return csrf
+  */
+  getResourceCSRF() {
+    // Local settings
+    let state = this._registry.get('properties', 'state');
+    if (state.hasOwnProperty('csrf'))
+      return state.csrf;
+
+    // Global settings
+    state = this._registry.get('properties', 'serviceSettings');
+    if (state.hasOwnProperty('csrf'))
+      return state.csrf;
+
+    return false;
+  }
 
   /**
   * Resource definition contains information about service methods
@@ -157,15 +175,39 @@ class Resource {
   }
 
   /**
-  * Handle CORS request.
+  * Handle access control for request.
   *
-  * @param args
+  * @param req
+  * @param res
+  * @param urlInfo
+  *   Parsed url info.
   * @param callback
   */
-  accessControlCORS(req, res, callback) {
+  accessControl(req, res, urlInfo, callback) {
+    // Handle request CORS methods
+    this.accessControlCORS(req, res, urlInfo, err => {
+      if (err) return callback(err);
+
+      // Check CSRF token to prevent XSS attacks
+      this.accessControlCSRF(req, res, urlInfo, err => {
+        if (err)
+          callback(err);
+        else
+          callback(null);
+      });
+    });
+  }
+
+  /**
+  * Handle CORS request.
+  *
+  * @param req
+  * @param res
+  * @param callback
+  */
+  accessControlCORS(req, res, urlInfo, callback) {
     let corsOptions = this.getResourceCORS();
 
-    // If CORS is not defined, we skip this
     if (!corsOptions)
       return callback(null);
 
@@ -198,6 +240,64 @@ class Resource {
       return res.sendStatus(204);
 
     return callback(null);
+  }
+
+
+  /**
+  * Handle CSRF token check.
+  *
+  * @param req
+  * @param res
+  * @param callback
+  */
+  accessControlCSRF(req, res, urlInfo, callback) {
+    let csrfOptions = this.getResourceCSRF();
+
+    if (!csrfOptions)
+      return callback(null)
+
+    let requireToken = csrfOptions.hasOwnProperty('requireToken') ?
+      csrfOptions.requireToken : false;
+
+    let safeMethods = csrfOptions.hasOwnProperty('safeMethods') ?
+      csrfOptions.safeMethods : ["GET", "OPTIONS"];
+
+    let tokenName = csrfOptions.hasOwnProperty('tokenName') ?
+      csrfOptions.tokenName : 'x-csrf-token';
+
+    if (!requireToken || safeMethods.indexOf(urlInfo.method) >= 0)
+      return callback(null);
+
+    if (this.isValidSessionToken(req, 'csrf', req.header(tokenName)))
+      callback(null);
+    else
+      callback(new Error("CSRF token validation failed"));
+  }
+
+  /**
+  * Set session token.
+  *
+  * @param req
+  * @param req
+  *   Token key for session
+  */
+  setSessionToken(req, tokenKey) {
+
+  }
+
+  /**
+  * Validate given session token.
+  *
+  * @param req
+  * @param tokenKey
+  * @param tokenValue
+  *   Token to be validated.
+  */
+  isValidSessionToken(req, tokenKey, tokenValue) {
+    return (req.session &&
+      req.session.hasOwnProperty('rest_service_tokens') &&
+      req.session.rest_service_tokens.hasOwnProperty(tokenKey) &&
+      req.session.rest_service_tokens[tokenKey] == tokenValue) ? true : false;
   }
 
   /**

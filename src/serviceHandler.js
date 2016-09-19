@@ -78,6 +78,7 @@ class ServiceHandler {
 
   /**
   * Services lookup maps incoming request to certain endpoint.
+  * TODO: Use promises to clean this code.
   *
   * @param req
   * @param res
@@ -98,9 +99,9 @@ class ServiceHandler {
     if (!resource.resourceEnabled(selector))
       return callback(self.buildError(500, "Resource is not available"));
 
-    // Handle request CORS methods
-    resource.accessControlCORS(req, res, err => {
-      if (err) callback(self.buildError(500, "CORS error"));
+    // Check access control like CORS and CSRF
+    resource.accessControl(req, res, urlInfo, err => {
+      if (err) callback(self.buildError(500, err.toString()));
 
       // Fetch resource info and preprocess incoming arguments
       var endpoint = resource.getEndpointInfo(selector);
@@ -245,7 +246,6 @@ class ServiceHandler {
     var args = {};
 
     definitions.map(defArg => {
-
       let optional = defArg.hasOwnProperty('optional') ?
         defArg['optional'] : false;
 
