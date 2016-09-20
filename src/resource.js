@@ -1,4 +1,5 @@
 import DomainMap from "domain-map"
+import nodeUUID from "node-uuid"
 
 /**
 * Resource class
@@ -275,15 +276,54 @@ class Resource {
   }
 
   /**
+  * Returns current session token. If token doesn't exists, it will be created.
+  *
+  * @param req
+  * @return created
+  */
+  getCurrentToken(req) {
+    let token = this.getSessionToken(req, 'csrf');
+    if (!token)
+      token = this.setSessionToken(req, 'csrf')
+    return token;
+  }
+
+  /**
+  * Get session token. If token doesn't exists, it will be generated.
+  *
+  * @param req
+  * @param tokenKey
+  *   Token key for session
+  */
+  getSessionToken(req, tokenKey) {
+    return req.session &&
+      req.session.hasOwnProperty('rest_service_tokens') &&
+      req.session.rest_service_tokens.hasOwnProperty(tokenKey) ?
+        req.session.rest_service_tokens[tokenKey] : false;
+  }
+
+  /**
   * Set session token.
   *
   * @param req
-  * @param req
+  * @param tokenKey
   *   Token key for session
+  * @param token
   */
-  setSessionToken(req, tokenKey) {
+  setSessionToken(req, tokenKey, token) {
+    if (!req.session)
+      return false;
 
+    if (!req.session.hasOwnProperty('rest_service_tokens'))
+      req.session.rest_service_tokens = {};
+
+    if (token === undefined)
+      token = nodeUUID.v4();
+
+    req.session.rest_service_tokens[tokenKey] = token;
+    return req.session.rest_service_tokens[tokenKey];
   }
+
 
   /**
   * Validate given session token.
@@ -294,10 +334,8 @@ class Resource {
   *   Token to be validated.
   */
   isValidSessionToken(req, tokenKey, tokenValue) {
-    return (req.session &&
-      req.session.hasOwnProperty('rest_service_tokens') &&
-      req.session.rest_service_tokens.hasOwnProperty(tokenKey) &&
-      req.session.rest_service_tokens[tokenKey] == tokenValue) ? true : false;
+    return (tokenValue && this.getSessionToken(req, tokenKey) == tokenValue) ?
+      true : false;
   }
 
   /**

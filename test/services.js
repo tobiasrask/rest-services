@@ -1,4 +1,4 @@
-import {RestServices, Resource} from "./../src/index"
+import { RestServices, Resource } from "./../src/index"
 import assert from "assert";
 
 describe('RestServices', () => {
@@ -111,7 +111,7 @@ describe('RestServices', () => {
             type: 'operations',
             operation: 'delete'
           })
-        },        
+        },
         {
           method: 'POST',
           url: `/${servicePathProb}/${resourceIdProb}/actionName`,
@@ -174,7 +174,7 @@ describe('RestServices', () => {
 
       if (errors.length > 0)
         done(errors);
-      else 
+      else
         done();
     })
   });
@@ -228,7 +228,7 @@ describe('RestServices', () => {
             type: 'operations',
             operation: 'delete'
           })
-        },        
+        },
         {
           method: 'POST',
           url: `/${servicePathProb}/${resourceIdProb}/actionName`,
@@ -294,7 +294,7 @@ describe('RestServices', () => {
 
       if (errors.length > 0)
         done();
-      else 
+      else
         done();
     })
   });
@@ -468,7 +468,7 @@ describe('RestServices', () => {
                     });
                   },
                   arguments: []
-                }          
+                }
               },
               targetedActions: {
                 someTargettedAction: {
@@ -480,7 +480,7 @@ describe('RestServices', () => {
                     });
                   },
                   arguments: []
-                }                 
+                }
               }
             }
           };
@@ -522,7 +522,7 @@ describe('RestServices', () => {
 
       if (errors.length > 0)
         done(errors[0]);
-      else 
+      else
         done();
     })
   });
@@ -690,7 +690,7 @@ describe('RestServices', () => {
                     callback(this.setError(item.code, item.msg));
                   },
                   arguments: []
-                }          
+                }
               },
               targetedActions: {
                 someTargettedAction: {
@@ -701,7 +701,7 @@ describe('RestServices', () => {
                     callback(this.setError(item.code, item.msg));
                   },
                   arguments: []
-                }                 
+                }
               }
             }
           };
@@ -735,7 +735,7 @@ describe('RestServices', () => {
         service.lookup(req, {}, (err, output) => {
           if (!err)
             return errors.push(new Error(`It should return error ${item.url}`));
-          
+
           // Validate error code
           if (err.code !== item.assumeResult.code)
             errors.push(new Error(`Unexpected error code ${item.url}`));
@@ -747,7 +747,7 @@ describe('RestServices', () => {
 
       if (errors.length > 0)
         done(errors[0]);
-      else 
+      else
         done();
     })
   });
