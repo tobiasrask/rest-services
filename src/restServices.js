@@ -107,7 +107,8 @@ class RestServices {
       var hsc = err.hasOwnProperty('code') ? err.code : 500;
       res.status(hsc).send(err.message);
 
-    } else {
+    } else if (response.hasOwnProperty('result') && response.result != null) {
+      // Send result
       if (responseFormat == "jsonp") {
         res.jsonp(response.result);
       } else if (responseFormat == "json") {
@@ -116,6 +117,9 @@ class RestServices {
         // Unknown response format
         res.sendStatus(400);
       }
+    } else {
+      // No content, send status
+      res.sendStatus(200);
     }
     res.end();
   }
