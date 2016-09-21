@@ -296,7 +296,7 @@ class ServiceHandler {
       // Typecasts
       if (type != null) {
         if (type == 'int')
-          value = Number.isInteger(value) ? parseInt(value) : null;
+          value = !Number.isNaN(value) ? parseInt(value) : null;
       }
       args[name] = value;
     });
