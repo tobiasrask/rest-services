@@ -82,7 +82,7 @@ class RestServices {
 
         app.use(path, function(req, res, next) {
           // Route request to resource and fetch response
-          serviceHandler.lookup(req, res, function(err, response) {
+          serviceHandler.lookup(req, res, function(err, response = {}) {
             // Allow altering response sending
             self.sendResponse(err, req, res, response);
           });
