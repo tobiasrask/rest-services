@@ -1,6 +1,6 @@
 {
   "name": "rest-services",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "RESTful services for Express.js.",
   "main": "lib/index.js",
   "scripts": {
