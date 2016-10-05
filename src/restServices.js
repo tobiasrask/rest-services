@@ -93,7 +93,7 @@ class RestServices {
 
   /**
   * Method returns query response. This allows one to alter response before
-  * sending.
+  * sending. Response format defaults to json.
   *
   * @param err
   * @param req
@@ -101,18 +101,23 @@ class RestServices {
   * @param response
   */
   sendResponse(err, req, res, response) {
-    var responseFormat = 'text';
+    var responseFormat = 'json';
     let contentType = req.get('Content-Type');
 
     switch (contentType) {
       case "json":
       case "application/json":
-        responseFormat = "json"
+        responseFormat = "json";
         break;
 
       case "javascript":
       case "application/javascript":
-        responseFormat = "jsonp"
+        responseFormat = "jsonp";
+        break;
+
+      case "text/plain":
+      case "text/html":
+        responseFormat = "text";
         break;
     }
 
