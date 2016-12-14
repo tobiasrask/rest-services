@@ -16,9 +16,9 @@ Let's build our first *Hello, world!* **Service**. Here is normal usage with ES2
 
 ```js
 // server.js
-import {RestServices} from 'rest-services'
-import ExampleResource from './example-resource'
 import express from 'express'
+import { RestServices } from 'rest-services'
+import ExampleResource from './example-resource'
 
 var app = express();
 
@@ -42,7 +42,7 @@ services.mount(app);
 var server = app.listen(3000, () => {
   var host = server.address().address;
   var port = server.address().port;
-  console.info(`==> 🌎  Listening ${host} on port ${port}.`);
+  console.info(`==> 🌎  Listening ${ host } on port ${ port }.`);
 });
 
 ```
@@ -50,11 +50,10 @@ Following code provides our first **Resource**:
 
 ```js
 // example-resource.js
-import {Resource} from 'rest-services'
+import { Resource } from 'rest-services'
 
 // Define your own resources by extending Resource class
 class ExampleResource extends Resource {
-  
   /**
   * Define resource endpoints.
   *
@@ -78,7 +77,7 @@ class ExampleResource extends Resource {
                 description: 'Entity id'
               }
             ]
-          }        
+          }
         },
         actions: {},
         targetedActions: {}
@@ -168,18 +167,18 @@ Resource mappings may define list of parameters they are expecting. Parameters a
 In our example we defined one parameter named *id* to be retrieved from url path. Parameters can be fetched from *url*, *query string* or request *payload*.
 
 ```js
-  // Examples how to define arguments with different sources: 
+  // Examples how to define arguments with different sources:
   let arguments = [
     {
       name: 'id',
-      source: {path: 0},
+      source: { path: 0 },
       optional: false,
       type: 'string',
       description: 'Entity id from url path, index 0'
     },
     {
       name: 'limit',
-      source: {param: 'limit'},
+      source: { param: 'limit' },
       optional: true,
       type: 'string',
       description: 'Limit will be fetched from query string'
@@ -195,7 +194,7 @@ In our example we defined one parameter named *id* to be retrieved from url path
 ```
 
 #### HTTP Access Control (CORS)
-If your endpoint will be called from other domain than servers own domain, you need to enable CORS support for [preflight requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS). You can provide default CORS settings for the whole **Service** or limit to a single **Resource**. 
+If your endpoint will be called from other domain than servers own domain, you need to enable CORS support for [preflight requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS). You can provide default CORS settings for the whole **Service** or limit to a single **Resource**.
 
 Enable CORS by defining key **allowedOrigins** with list of allowed origins. Following example demonstrates how to allow CORS request from certain domain:
 
@@ -272,10 +271,10 @@ const config = {
 If there is no reason to allow preflight requests for all resource, you can limit support for only the certain endpoint:
 ```js
 // example-resource.js
-import {Resource} from 'rest-services'
+import { Resource } from 'rest-services'
 
 class ExampleResource extends Resource {
-  
+
   getInitialState() {
     return {
       resourceId: 'example',
@@ -302,11 +301,11 @@ Let's put all pieces in one Resource:
 
 ```js
 // example-resource.js
-import {Resource} from 'rest-services'
+import { Resource } from 'rest-services'
 
 // Define your own resources by extending Resource class
 class ExampleResource extends Resource {
-  
+
   /**
   * Define resource endpoints by overriding getInitialState() method.
   *
@@ -393,7 +392,7 @@ class ExampleResource extends Resource {
                 description: 'Limit'
               }
             ]
-          }          
+          }
         },
         actions: {
           subscribe: {
@@ -423,7 +422,7 @@ class ExampleResource extends Resource {
                 optional: false,
                 type: 'string',
                 description: 'Entity id'
-              },          
+              },
               {
                 name: 'subscription',
                 source: 'data',
@@ -445,7 +444,7 @@ class ExampleResource extends Resource {
   *   _req  Request object provided by express
   *   _res  Response object provided by express js
   *   ... arguments defined by you, see getInitialState()
-  *   
+  *
   * @param callback
   */
   retrieveItem(args, callback) {
@@ -472,7 +471,7 @@ class ExampleResource extends Resource {
   * @param callback
   */
   createItem(args, callback) {
-    // Request payload data is passed for you 
+    // Request payload data is passed for you
     let entityParams = args.entityData;
 
     // Implement this functionality...
@@ -488,7 +487,7 @@ class ExampleResource extends Resource {
   * @param callback
   */
   updateItem(args, callback) {
-    // Implement this functionality...  
+    // Implement this functionality...
     callback(null, {
       result: false
     });
@@ -529,11 +528,10 @@ class ExampleResource extends Resource {
   */
   subscribe(args, callback) {
     let succeed = false;
-    // Request payload data is passed for you 
+    // Request payload data is passed for you
     let entityParams = args.subscription;
 
     // Implement this functionality...
-
     callback(null, {
       result: succeed
     });
@@ -551,11 +549,10 @@ class ExampleResource extends Resource {
     // Entity id will be available from args
     let entityId = args.id;
 
-    // Request payload data is passed for you 
+    // Request payload data is passed for you
     let entityParams = args.subscription;
 
     // Implement this functionality...
-
     callback(null, {
       result: succeed
     });
