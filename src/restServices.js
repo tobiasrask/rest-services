@@ -122,25 +122,28 @@ class RestServices {
     }
 
     if (err) {
-      var hsc = err.hasOwnProperty('code') ? err.code : 500;
+      let build = {
+        code: err.hasOwnProperty('code') ? err.code : 500,
+        message: err.message
+      }
+
+      if (err.hasOwnProperty('reason_code'))
+        build.reason_code = err.reason_code;
+
+      if (err.hasOwnProperty('reason_msg'))
+        build.reason_msg = err.reason_msg;
 
       if (responseFormat == "jsonp") {
-        res.status(hsc).jsonp({
-          error: {
-            code: hsc,
-            message: err.message
-          }
+        res.status(build.code).jsonp({
+          error: build
         });
       } else if (responseFormat == "json") {
-        res.status(hsc).json({
-          error: {
-            code: hsc,
-            message: err.message
-          }
+        res.status(build.code).json({
+          error: build
         });
       } else {
         // Unknown response format
-        res.status(hsc).send(err.message);
+        res.status(build.code).send(err.message);
       }
 
     } else if (response.hasOwnProperty('result') && response.result != null) {

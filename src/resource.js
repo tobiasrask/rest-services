@@ -353,6 +353,32 @@ class Resource {
     error.code = code;
     return error;
   }
+
+  /**
+  * Create error to be passed for services handler. Usually we just bind HTTP
+  * status code and related message. Method can be used also with normal errors,
+  * which will be wrapped and passed.
+  *
+  * @param code
+  * @param message or Error object
+  * @param options
+  *   reason_code:
+  * @return error
+  */
+  createError(code, message, options) {
+    var error = typeof message === 'string' ?
+      new Error(message) : message;
+
+    error.code = code;
+
+    if (options.hasOwnProperty('reason_code'))
+      error.reason_code = options.reason_code;
+
+    if (options.hasOwnProperty('reason_msg'))
+      error.reason_msg = options.reason_msg;
+
+    return error;
+  }
 }
 
 export default Resource;
