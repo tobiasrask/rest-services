@@ -365,7 +365,7 @@ class Resource {
   *   reason_code:
   * @return error
   */
-  createError(code, message, options) {
+  createError(code, message, options = {}) {
     var error = typeof message === 'string' ?
       new Error(message) : message;
 
