@@ -133,6 +133,9 @@ class RestServices {
       if (err.hasOwnProperty('reason_msg'))
         build.reason_msg = err.reason_msg;
 
+      if (err.hasOwnProperty('context'))
+        build.context = err.context;
+
       if (responseFormat == "jsonp") {
         res.status(build.code).jsonp({
           error: build
