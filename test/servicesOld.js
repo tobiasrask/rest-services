@@ -1,5 +1,4 @@
-import {RestServices, Resource} from "./../src/index"
-import assert from "assert";
+import {RestServices, Resource} from './../src/index'
 
 describe('RestServicesOldAPI', () => {
 
@@ -7,9 +6,9 @@ describe('RestServicesOldAPI', () => {
     it('It should initialize services without errors', (done) => {
 
       // Define probs
-      let serviceNameProb = 'testResource:';
-      let serviceLabelProb = 'Test API';
-      let servicePathProb = 'api:';
+      let serviceNameProb = 'testResource:'
+      let serviceLabelProb = 'Test API'
+      let servicePathProb = 'api:'
       let resourceIdProb = 'resourceId:'
 
       // Test resource stub
@@ -24,7 +23,7 @@ describe('RestServicesOldAPI', () => {
               actions: {},
               targeted_actions: {}
             }
-          };
+          }
         }
       }
 
@@ -41,36 +40,41 @@ describe('RestServicesOldAPI', () => {
         ]
       }
 
-      var restServices = new RestServices(config);
-      let service = restServices.getServiceByName(serviceNameProb)
+      const restServices = new RestServices(config)
+      const service = restServices.getServiceByName(serviceNameProb)
 
-      if (!service)
-        return done(new Error("It didn't return service"));
+      if (!service) {
+        return done(new Error('It didn\'t return service'))
+      }
 
-      if (service.getServiceName() != serviceNameProb)
-        return done(new Error("Service name was not initialized appropriate"));
+      if (service.getServiceName() != serviceNameProb) {
+        return done(new Error('Service name was not initialized appropriate'))
+      }
 
-      if (service.getServicePath() != servicePathProb)
-        return done(new Error("Service path was not initialized appropriate"));
+      if (service.getServicePath() != servicePathProb) {
+        return done(new Error('Service path was not initialized appropriate'))
+      }
 
-      let resourceInstance = service.getResource(resourceIdProb);
-      if (!resourceInstance)
-        return done(new Error("It didn't return resource by id"));
+      const resourceInstance = service.getResource(resourceIdProb)
+      if (!resourceInstance) {
+        return done(new Error('It didn\'t return resource by id'))
+      }
 
-      if (resourceInstance.getResourceID() != resourceIdProb)
-        return done(new Error("Resource id doesn't match"));
+      if (resourceInstance.getResourceID() != resourceIdProb) {
+        return done(new Error('Resource id doesn\'t match'))
+      }
 
-      done();
+      done()
     })
-  });
+  })
 
   describe('Test initialization with v0.1.2', () => {
     it('It should initialize services without errors', (done) => {
 
       // Define probs
-      let serviceNameProb = 'testResource:';
-      let serviceLabelProb = 'Test API';
-      let servicePathProb = 'api:';
+      let serviceNameProb = 'testResource:'
+      let serviceLabelProb = 'Test API'
+      let servicePathProb = 'api:'
       let resourceIdProb = 'resourceId:'
 
       // Test resource stub
@@ -83,7 +87,7 @@ describe('RestServicesOldAPI', () => {
               actions: {},
               targeted_actions: {}
             }
-          };
+          }
         }
       }
 
@@ -100,36 +104,42 @@ describe('RestServicesOldAPI', () => {
         ]
       }
 
-      var restServices = new RestServices(config);
+      var restServices = new RestServices(config)
       let service = restServices.getServiceByName(serviceNameProb)
 
-      if (!service)
-        return done(new Error("It didn't return service"));
+      if (!service) {
+        return done(new Error('It didn\'t return service'))
+      }
 
-      if (service.getServiceName() != serviceNameProb)
-        return done(new Error("Service name was not initialized appropriate"));
+      if (service.getServiceName() != serviceNameProb) {
+        return done(new Error('Service name was not initialized appropriate'))
+      }
 
-      if (service.getServicePath() != servicePathProb)
-        return done(new Error("Service path was not initialized appropriate"));
+      if (service.getServicePath() != servicePathProb) {
+        return done(new Error('Service path was not initialized appropriate'))
+      }
 
-      let resourceInstance = service.getResource(resourceIdProb);
-      if (!resourceInstance)
-        return done(new Error("It didn't return resource by id"));
+      const resourceInstance = service.getResource(resourceIdProb)
 
-      if (resourceInstance.getResourceID() != resourceIdProb)
-        return done(new Error("Resource id doesn't match"));
+      if (!resourceInstance) {
+        return done(new Error('It didn\'t return resource by id'))
+      }
 
-      done();
+      if (resourceInstance.getResourceID() != resourceIdProb) {
+        return done(new Error('Resource id doesn\'t match'))
+      }
+
+      done()
     })
-  });
+  })
 
   describe('Test service selectors', () => {
     it('It should select correct selectors for lookup', (done) => {
 
       // Define probs
-      let serviceNameProb = 'testResource:';
-      let serviceLabelProb = 'Test API';
-      let servicePathProb = 'api';
+      let serviceNameProb = 'testResource:'
+      let serviceLabelProb = 'Test API'
+      let servicePathProb = 'api'
       let resourceIdProb = 'resource'
 
       const selectorTests = [
@@ -189,7 +199,7 @@ describe('RestServicesOldAPI', () => {
             operation: 'targetActionName'
           })
         },
-      ];
+      ]
 
       // Test resource stub
       class TestResource extends Resource {
@@ -203,7 +213,7 @@ describe('RestServicesOldAPI', () => {
               actions: {},
               targeted_actions: {}
             }
-          };
+          }
         }
       }
 
@@ -220,35 +230,37 @@ describe('RestServicesOldAPI', () => {
         ]
       }
 
-      var restServices = new RestServices(config);
+      var restServices = new RestServices(config)
       let service = restServices.getServiceByName(serviceNameProb)
-      let errors = [];
+      let errors = []
 
-      selectorTests.map(item => {
+      selectorTests.map((item) => {
         let req = {
           method: item.method,
           originalUrl: item.url
         }
-        let urlInfo = service.getUrlInfo(req);
-        let selector = service.buildSelector(urlInfo);
-        if (JSON.stringify(selector) != item.assumeSelector)
-          errors.push(new Error(`Wrong selector returned for: ${item.method}`));
-      });
+        let urlInfo = service.getUrlInfo(req)
+        let selector = service.buildSelector(urlInfo)
+        if (JSON.stringify(selector) != item.assumeSelector) {
+          errors.push(new Error(`Wrong selector returned for: ${item.method}`))
+        }
+      })
 
-      if (errors.length > 0)
-        done(errors);
-      else 
-        done();
+      if (errors.length > 0) {
+        done(errors)
+      } else {
+        done()
+      } 
     })
-  });
+  })
 
   describe('Test service lookup', () => {
     it('It should return 404 error if resource doesn\'t exists.', (done) => {
 
       // Define probs
-      let serviceNameProb = 'testResource:';
-      let serviceLabelProb = 'Test API';
-      let servicePathProb = 'api';
+      let serviceNameProb = 'testResource:'
+      let serviceLabelProb = 'Test API'
+      let servicePathProb = 'api'
       let resourceIdProb = 'resource'
 
       const selectorTests = [
@@ -308,7 +320,7 @@ describe('RestServicesOldAPI', () => {
             operation: 'targetActionName'
           })
         },
-      ];
+      ]
 
       // Test resource stub
       class TestResource extends Resource {
@@ -322,7 +334,7 @@ describe('RestServicesOldAPI', () => {
               actions: {},
               targeted_actions: {}
             }
-          };
+          }
         }
       }
 
@@ -339,38 +351,40 @@ describe('RestServicesOldAPI', () => {
         ]
       }
 
-      var restServices = new RestServices(config);
+      var restServices = new RestServices(config)
       let service = restServices.getServiceByName(serviceNameProb)
 
-      let errors = [];
+      let errors = []
 
       // Test for selector selection
-      selectorTests.map(item => {
+      selectorTests.map((item) => {
         let req = {
           method: item.method,
           originalUrl: item.url
         }
 
-        service.lookup(req, {}, (err, data) => {
-          if (!err)
-            errors.push(new Error(`It should return error for ${item.url}`));
-        });
-      });
+        service.lookup(req, {}, (err, _data) => {
+          if (!err) {
+            errors.push(new Error(`It should return error for ${item.url}`))
+          }
+        })
+      })
 
-      if (errors.length > 0)
-        done();
-      else 
-        done();
+      if (errors.length > 0) {
+        done()
+      } else {
+        done()
+      } 
     })
-  });
+  })
 
   describe('Test service lookup', () => {
     it('It should pass execution if operation exists.', (done) => {
 
       // Define probs
-      let serviceNameProb = 'testResource:';
-      let serviceLabelProb = 'Test API';
-      let servicePathProb = 'api';
+      let serviceNameProb = 'testResource:'
+      let serviceLabelProb = 'Test API'
+      let servicePathProb = 'api'
       let resourceIdProb = 'resource'
 
       // Endpoint result tests
@@ -439,7 +453,7 @@ describe('RestServicesOldAPI', () => {
           }),
           assumeResult: resultTests.targetedAction
         },
-      ];
+      ]
 
       // Test resource stub
       class TestResource extends Resource {
@@ -456,7 +470,7 @@ describe('RestServicesOldAPI', () => {
                   callback: (args, callback) => {
                     callback(null, {
                       result: resultTests.retrieve
-                    });
+                    })
                   },
                   arguments: [
                     {
@@ -474,7 +488,7 @@ describe('RestServicesOldAPI', () => {
                   callback: (args, callback) => {
                     callback(null, {
                       result: resultTests.create
-                    });
+                    })
                   },
                   arguments: []
                 },
@@ -484,7 +498,7 @@ describe('RestServicesOldAPI', () => {
                   callback: (args, callback) => {
                     callback(null, {
                       result: resultTests.update
-                    });
+                    })
                   },
                   arguments: [
                     {
@@ -502,7 +516,7 @@ describe('RestServicesOldAPI', () => {
                   callback: (args, callback) => {
                     callback(null, {
                       result: resultTests.delete
-                    });
+                    })
                   },
                   arguments: [
                     {
@@ -520,7 +534,7 @@ describe('RestServicesOldAPI', () => {
                   callback: (args, callback) => {
                     callback(null, {
                       result: resultTests.index
-                    });
+                    })
                   },
                   arguments: []
                 }
@@ -532,7 +546,7 @@ describe('RestServicesOldAPI', () => {
                   callback: (args, callback) => {
                     callback(null, {
                       result: resultTests.action
-                    });
+                    })
                   },
                   arguments: []
                 }          
@@ -544,13 +558,13 @@ describe('RestServicesOldAPI', () => {
                   callback: (args, callback) => {
                     callback(null, {
                       result: resultTests.targetedAction
-                    });
+                    })
                   },
                   arguments: []
                 }                 
               }
             }
-          };
+          }
         }
       }
 
@@ -567,40 +581,43 @@ describe('RestServicesOldAPI', () => {
         ]
       }
 
-      var restServices = new RestServices(config);
+      var restServices = new RestServices(config)
       let service = restServices.getServiceByName(serviceNameProb)
-      let errors = [];
+      let errors = []
 
       // Test for selector selection
-      selectorTests.map(item => {
+      selectorTests.map((item) => {
         let req = {
           method: item.method,
           originalUrl: item.url
         }
 
         service.lookup(req, {}, (err, output) => {
-          if (err)
-            return errors.push(new Error(`It returned error for ${item.url}`));
+          if (err) {
+            return errors.push(new Error(`It returned error for ${item.url}`))
+          }
 
-          if (output.result !== item.assumeResult)
-            errors.push(new Error(`Unexpected result for ${item.url}`));
-        });
-      });
+          if (output.result !== item.assumeResult) {
+            errors.push(new Error(`Unexpected result for ${item.url}`))
+          }
+        })
+      })
 
-      if (errors.length > 0)
-        done(errors[0]);
-      else 
-        done();
+      if (errors.length > 0) {
+        done(errors[0])
+      } else {
+        done()
+      } 
     })
-  });
+  })
 
   describe('Error responses and HTTP status codes', () => {
     it('It should pass error data.', (done) => {
 
       // Define probs
-      let serviceNameProb = 'testResource:';
-      let serviceLabelProb = 'Test API';
-      let servicePathProb = 'api';
+      let serviceNameProb = 'testResource:'
+      let serviceLabelProb = 'Test API'
+      let servicePathProb = 'api'
       let resourceIdProb = 'resource'
 
       // Endpoint result tests
@@ -669,7 +686,7 @@ describe('RestServicesOldAPI', () => {
           }),
           assumeResult: resultTests.targetedAction
         },
-      ];
+      ]
 
       // Test resource stub
       class TestResource extends Resource {
@@ -684,8 +701,8 @@ describe('RestServicesOldAPI', () => {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
-                    let item = resultTests.retrieve;
-                    callback(this.setError(item.code, item.msg));
+                    let item = resultTests.retrieve
+                    callback(this.setError(item.code, item.msg))
                   },
                   arguments: [
                     {
@@ -701,8 +718,8 @@ describe('RestServicesOldAPI', () => {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
-                    let item = resultTests.create;
-                    callback(this.setError(item.code, item.msg));
+                    let item = resultTests.create
+                    callback(this.setError(item.code, item.msg))
                   },
                   arguments: []
                 },
@@ -710,8 +727,8 @@ describe('RestServicesOldAPI', () => {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
-                    let item = resultTests.update;
-                    callback(this.setError(item.code, item.msg));
+                    let item = resultTests.update
+                    callback(this.setError(item.code, item.msg))
                   },
                   arguments: [
                     {
@@ -727,8 +744,8 @@ describe('RestServicesOldAPI', () => {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
-                    let item = resultTests.delete;
-                    callback(this.setError(item.code, item.msg));
+                    let item = resultTests.delete
+                    callback(this.setError(item.code, item.msg))
                   },
                   arguments: [
                     {
@@ -744,8 +761,8 @@ describe('RestServicesOldAPI', () => {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
-                    let item = resultTests.index;
-                    callback(this.setError(item.code, item.msg));
+                    let item = resultTests.index
+                    callback(this.setError(item.code, item.msg))
                   },
                   arguments: []
                 }
@@ -755,8 +772,8 @@ describe('RestServicesOldAPI', () => {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
-                    let item = resultTests.action;
-                    callback(this.setError(item.code, item.msg));
+                    let item = resultTests.action
+                    callback(this.setError(item.code, item.msg))
                   },
                   arguments: []
                 }          
@@ -766,14 +783,14 @@ describe('RestServicesOldAPI', () => {
                   title: '',
                   description: '',
                   callback: (args, callback) => {
-                    let item = resultTests.targetedAction;
-                    callback(this.setError(item.code, item.msg));
+                    let item = resultTests.targetedAction
+                    callback(this.setError(item.code, item.msg))
                   },
                   arguments: []
                 }                 
               }
             }
-          };
+          }
         }
       }
 
@@ -790,34 +807,38 @@ describe('RestServicesOldAPI', () => {
         ]
       }
 
-      var restServices = new RestServices(config);
+      var restServices = new RestServices(config)
       let service = restServices.getServiceByName(serviceNameProb)
-      let errors = [];
+      let errors = []
 
       // Test for selector selection
-      selectorTests.map(item => {
+      selectorTests.map((item) => {
         let req = {
           method: item.method,
           originalUrl: item.url
         }
 
-        service.lookup(req, {}, (err, output) => {
-          if (!err)
-            return errors.push(new Error(`It should return error ${item.url}`));
+        service.lookup(req, {}, (err, _output) => {
+          if (!err) {
+            return errors.push(new Error(`It should return error ${item.url}`))
+          }
           
           // Validate error code
-          if (err.code !== item.assumeResult.code)
-            errors.push(new Error(`Unexpected error code ${item.url}`));
+          if (err.code !== item.assumeResult.code) {
+            errors.push(new Error(`Unexpected error code ${item.url}`))
+          }
 
-          if (err.toString() !== "Error: " + item.assumeResult.msg)
-            errors.push(new Error(`Unexpected error message ${item.url}`));
-        });
-      });
+          if (err.toString() !== 'Error: ' + item.assumeResult.msg) {
+            errors.push(new Error(`Unexpected error message ${item.url}`))
+          }
+        })
+      })
 
-      if (errors.length > 0)
-        done(errors[0]);
-      else 
-        done();
+      if (errors.length > 0) {
+        done(errors[0])
+      } else {
+        done()
+      } 
     })
-  });
-});
+  })
+})

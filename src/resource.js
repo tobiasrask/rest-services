@@ -1,5 +1,5 @@
-import DomainMap from "domain-map"
-import nodeUUID from "node-uuid"
+import DomainMap from 'domain-map'
+import UUID from 'uuid'
 
 /**
 * Resource class
@@ -11,36 +11,38 @@ class Resource {
   *
   * @param variables
   */
-  constructor(variables = {}) {
-    this._registry = new DomainMap();
+  constructor (variables = {}) {
+    this._registry = new DomainMap()
 
-    if (variables.hasOwnProperty('context'))
-      this._registry.set('properties', 'context', variables.context);
+    if (variables.hasOwnProperty('context')) {
+      this._registry.set('properties', 'context', variables.context)
+    }
 
-    if (variables.hasOwnProperty('serviceSettings'))
-      this._registry.set('properties', 'serviceSettings', variables.serviceSettings);
+    if (variables.hasOwnProperty('serviceSettings')) {
+      this._registry.set('properties', 'serviceSettings', variables.serviceSettings)
+    }
 
-    let state = this.getInitialState();
+    const state = this.getInitialState()
 
     // Support old notation
     if (state.hasOwnProperty('props') &&
         state.props.hasOwnProperty('resource_id')) {
-      state.resourceId = state.props.resource_id;
+      state.resourceId = state.props.resource_id
     }
     if (state.hasOwnProperty('resource_id')) {
-      state.resourceId = state.resource_id;
+      state.resourceId = state.resource_id
     }
     if (state.hasOwnProperty('resource_definition')) {
-      state.resourceDefinition = state.resource_definition;
-      delete state.resource_definition;
+      state.resourceDefinition = state.resource_definition
+      delete state.resource_definition
     }
     if (state.hasOwnProperty('resourceDefinition') &&
         state.resourceDefinition.hasOwnProperty('targeted_actions') ) {
-      state.resourceDefinition.targetedActions = state.resourceDefinition.targeted_actions;
-      delete state.resourceDefinition.targeted_actions;
+      state.resourceDefinition.targetedActions = state.resourceDefinition.targeted_actions
+      delete state.resourceDefinition.targeted_actions
     }
 
-    this._registry.set('properties', 'state', state);
+    this._registry.set('properties', 'state', state)
   }
 
   /**
@@ -56,18 +58,18 @@ class Resource {
         actions: {},
         targetedActions: {}
       }
-    };
+    }
   }
 
   /**
   * Returns resource context.
   *
   * @return context
-  *   Expected valeus are "server" or "manual". Lambda and test cases uses
-  *   "manual", expressjs uses "server".
+  *   Expected valeus are 'server' or 'manual'. Lambda and test cases uses
+  *   'manual', expressjs uses 'server'.
   */
   getContext() {
-    return this._registry.get('properties', 'context', false);
+    return this._registry.get('properties', 'context', false)
   }
 
   /**
@@ -77,9 +79,9 @@ class Resource {
   *   type
   *   method
   */
-  resourceEnabled(selector) {
+  resourceEnabled() {
     // TODO
-    return true;
+    return true
   }
 
   /**
@@ -89,17 +91,17 @@ class Resource {
   * - type
   *   Resource type can be 'operations' or 'actions'
   * - operation
-  *   can be operation name like 'create', 'update' or action name like 'updateAll';
+  *   can be operation name like 'create', 'update' or action name like 'updateAll'
   * @return boolean is enabled
   */
   getEndpointInfo(selector) {
-    const {type, operation} = selector;
+    const {type, operation} = selector
 
-    let resourceDefinition = this.resourceDefinition();
+    const resourceDefinition = this.resourceDefinition()
 
     return (resourceDefinition.hasOwnProperty(type) &&
-            resourceDefinition[type].hasOwnProperty(operation)) ?
-                resourceDefinition[type][operation] : false;
+      resourceDefinition[type].hasOwnProperty(operation)) ?
+      resourceDefinition[type][operation] : false
   }
 
   /**
@@ -108,12 +110,13 @@ class Resource {
   * @return id
   */
   getResourceID() {
-    let state = this._registry.get('properties', 'state');
+    const state = this._registry.get('properties', 'state')
 
-    if (state.hasOwnProperty('resourceId'))
-      return state.resourceId;
+    if (state.hasOwnProperty('resourceId')) {
+      return state.resourceId
+    }
 
-    throw "Resource id is not defined";
+    throw 'Resource id is not defined'
   }
 
   /**
@@ -123,16 +126,18 @@ class Resource {
   */
   getResourceCORS() {
     // Local settings
-    let state = this._registry.get('properties', 'state');
-    if (state.hasOwnProperty('cors'))
-      return state.cors;
+    let state = this._registry.get('properties', 'state')
+    if (state.hasOwnProperty('cors')) {
+      return state.cors
+    }
 
     // Global settings
-    state = this._registry.get('properties', 'serviceSettings');
-    if (state.hasOwnProperty('cors'))
-      return state.cors;
+    state = this._registry.get('properties', 'serviceSettings')
+    if (state.hasOwnProperty('cors')) {
+      return state.cors
+    }
 
-    return false;
+    return false
   }
 
   /**
@@ -142,27 +147,28 @@ class Resource {
   */
   getResourceCSRF() {
     // Local settings
-    let state = this._registry.get('properties', 'state');
-    if (state.hasOwnProperty('csrf'))
-      return state.csrf;
+    let state = this._registry.get('properties', 'state')
+    if (state.hasOwnProperty('csrf')) {
+      return state.csrf
+    }
 
     // Global settings
-    state = this._registry.get('properties', 'serviceSettings');
-    if (state.hasOwnProperty('csrf'))
-      return state.csrf;
-
-    return false;
+    state = this._registry.get('properties', 'serviceSettings')
+    if (state.hasOwnProperty('csrf')) {
+      return state.csrf
+    }
+    return false
   }
 
   /**
   * Resource definition contains information about service methods
   * and related operations.
   *
-  * @return data
+  * @return data
   */
   resourceDefinition() {
-    let state = this._registry.get('properties', 'state');
-    return state.resourceDefinition;
+    let state = this._registry.get('properties', 'state')
+    return state.resourceDefinition
   }
 
   /**
@@ -172,7 +178,11 @@ class Resource {
   * @return boolean enabled
   */
   cacheControlEnabled(selector) {
-    return false;
+    if (selector) {
+      // TODO
+      return false
+    }
+    return false
   }
 
   /**
@@ -186,17 +196,19 @@ class Resource {
   */
   accessControl(req, res, urlInfo, callback) {
     // Handle request CORS methods
-    this.accessControlCORS(req, res, urlInfo, err => {
-      if (err) return callback(err);
-
+    this.accessControlCORS(req, res, urlInfo, (err) => {
+      if (err) {
+        return callback(err)
+      }
       // Check CSRF token to prevent XSS attacks
-      this.accessControlCSRF(req, res, urlInfo, err => {
-        if (err)
-          callback(err);
-        else
-          callback(null);
-      });
-    });
+      this.accessControlCSRF(req, res, urlInfo, (err) => {
+        if (err) {
+          callback(err)
+        } else {
+          callback(null)
+        }
+      })
+    })
   }
 
   /**
@@ -207,40 +219,41 @@ class Resource {
   * @param callback
   */
   accessControlCORS(req, res, urlInfo, callback) {
-    let corsOptions = this.getResourceCORS();
+    let corsOptions = this.getResourceCORS()
 
-    if (!corsOptions)
-      return callback(null);
+    if (!corsOptions) {
+      return callback(null)
+    }
 
     let corsAllowAll = corsOptions.hasOwnProperty('dangerouslyAllowAll') ?
-      corsOptions.dangerouslyAllowAll : false;
+      corsOptions.dangerouslyAllowAll : false
 
     let allowedOrigins = corsOptions.hasOwnProperty('allowedOrigins') ?
-      corsOptions.allowedOrigins : [];
+      corsOptions.allowedOrigins : []
 
-    var origin = req.get('Origin');
+    var origin = req.get('Origin')
 
     if (origin !== undefined) {
       if (corsAllowAll || allowedOrigins.indexOf(origin) >= 0) {
-        res.header("Access-Control-Allow-Origin", origin);
-        res.header("Vary", "Origin");
+        res.header('Access-Control-Allow-Origin', origin)
+        res.header('Vary', 'Origin')
       }
     } else if (corsAllowAll) {
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header('Access-Control-Allow-Origin', '*')
     }
 
     // Send headers
     if (corsOptions.hasOwnProperty('responseHeaders')) {
-      corsOptions.responseHeaders.map(header => {
-        res.header(header.key, header.value);
-      });
+      corsOptions.responseHeaders.map((header) => {
+        res.header(header.key, header.value)
+      })
     }
 
     // Send OPTIONS
-    if (req.method.toLowerCase() === "options")
-      return res.sendStatus(204);
-
-    return callback(null);
+    if (req.method.toLowerCase() === 'options') {
+      return res.sendStatus(204)
+    }
+    return callback(null)
   }
 
 
@@ -252,27 +265,30 @@ class Resource {
   * @param callback
   */
   accessControlCSRF(req, res, urlInfo, callback) {
-    let csrfOptions = this.getResourceCSRF();
+    let csrfOptions = this.getResourceCSRF()
 
-    if (!csrfOptions)
+    if (!csrfOptions) {
       return callback(null)
+    }
 
     let requireToken = csrfOptions.hasOwnProperty('requireToken') ?
-      csrfOptions.requireToken : false;
+      csrfOptions.requireToken : false
 
     let safeMethods = csrfOptions.hasOwnProperty('safeMethods') ?
-      csrfOptions.safeMethods : ["GET", "OPTIONS"];
+      csrfOptions.safeMethods : ['GET', 'OPTIONS']
 
     let tokenName = csrfOptions.hasOwnProperty('tokenName') ?
-      csrfOptions.tokenName : 'x-csrf-token';
+      csrfOptions.tokenName : 'x-csrf-token'
 
-    if (!requireToken || safeMethods.indexOf(urlInfo.method) >= 0)
-      return callback(null);
+    if (!requireToken || safeMethods.indexOf(urlInfo.method) >= 0) {
+      return callback(null)
+    }
 
-    if (this.isValidSessionToken(req, 'csrf', req.header(tokenName)))
-      callback(null);
-    else
-      callback(new Error("CSRF token validation failed"));
+    if (this.isValidSessionToken(req, 'csrf', req.header(tokenName))) {
+      callback(null)
+    } else {
+      callback(new Error('CSRF token validation failed'))
+    }
   }
 
   /**
@@ -282,24 +298,25 @@ class Resource {
   * @return created
   */
   getCurrentToken(req) {
-    let token = this.getSessionToken(req, 'csrf');
-    if (!token)
+    let token = this.getSessionToken(req, 'csrf')
+    if (!token) {
       token = this.setSessionToken(req, 'csrf')
-    return token;
+    }
+    return token
   }
 
   /**
   * Get session token. If token doesn't exists, it will be generated.
   *
   * @param req
-  * @param tokenKey
+  * @param tokenKey
   *   Token key for session
   */
   getSessionToken(req, tokenKey) {
     return req.session &&
       req.session.hasOwnProperty('rest_service_tokens') &&
       req.session.rest_service_tokens.hasOwnProperty(tokenKey) ?
-        req.session.rest_service_tokens[tokenKey] : false;
+      req.session.rest_service_tokens[tokenKey] : false
   }
 
   /**
@@ -311,17 +328,20 @@ class Resource {
   * @param token
   */
   setSessionToken(req, tokenKey, token) {
-    if (!req.session)
-      return false;
+    if (!req.session) {
+      return false
+    }
 
-    if (!req.session.hasOwnProperty('rest_service_tokens'))
-      req.session.rest_service_tokens = {};
+    if (!req.session.hasOwnProperty('rest_service_tokens')) {
+      req.session.rest_service_tokens = {}
+    }
 
-    if (token === undefined)
-      token = nodeUUID.v4();
+    if (token === undefined) {
+      token = UUID.v4()
+    }
 
-    req.session.rest_service_tokens[tokenKey] = token;
-    return req.session.rest_service_tokens[tokenKey];
+    req.session.rest_service_tokens[tokenKey] = token
+    return req.session.rest_service_tokens[tokenKey]
   }
 
 
@@ -335,7 +355,7 @@ class Resource {
   */
   isValidSessionToken(req, tokenKey, tokenValue) {
     return (tokenValue && this.getSessionToken(req, tokenKey) == tokenValue) ?
-      true : false;
+      true : false
   }
 
   /**
@@ -349,9 +369,9 @@ class Resource {
   */
   setError(code, message) {
     var error = typeof message === 'string' ?
-      new Error(message) : message;
-    error.code = code;
-    return error;
+      new Error(message) : message
+    error.code = code
+    return error
   }
 
   /**
@@ -366,19 +386,20 @@ class Resource {
   * @return error
   */
   createError(code, message, options = {}) {
-    var error = typeof message === 'string' ?
-      new Error(message) : message;
+    let error = typeof message === 'string' ?
+      new Error(message) : message
 
-    error.code = code;
+    error.code = code
 
-    if (options.hasOwnProperty('reason_code'))
-      error.reason_code = options.reason_code;
+    if (options.hasOwnProperty('reason_code')) {
+      error.reason_code = options.reason_code
+    }
 
-    if (options.hasOwnProperty('reason_msg'))
-      error.reason_msg = options.reason_msg;
-
-    return error;
+    if (options.hasOwnProperty('reason_msg')) {
+      error.reason_msg = options.reason_msg
+    }
+    return error
   }
 }
 
-export default Resource;
+export default Resource

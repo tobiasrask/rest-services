@@ -1,5 +1,5 @@
-import DomainMap from "domain-map"
-import ServiceHandler from "./serviceHandler";
+import DomainMap from 'domain-map'
+import ServiceHandler from './serviceHandler'
 
 class RestServices {
 
@@ -11,14 +11,14 @@ class RestServices {
   * @param configuration
   */
   constructor(configuration = {}) {
-    this._registry = new DomainMap();
+    this._registry = new DomainMap()
 
     let debug = configuration.hasOwnProperty('debug') ?
-      configuration.debug : false;
+      configuration.debug : false
 
-    this._registry.set('properties', 'debug', debug);
+    this._registry.set('properties', 'debug', debug)
 
-    this.loadServices(configuration);
+    this.loadServices(configuration)
   }
 
   /**
@@ -30,17 +30,17 @@ class RestServices {
   */
   loadServices(configuration) {
     let services = configuration.hasOwnProperty('services') ?
-      configuration.services : [];
+      configuration.services : []
 
-    services.map(serviceConfig => {
+    services.map((serviceConfig) => {
       // Allow custom handlers
       let handler = serviceConfig.hasOwnProperty('handler') ?
         new serviceConfig.handler(serviceConfig, this) :
         new ServiceHandler(serviceConfig, this)
 
-      this._registry.set('services', serviceConfig.serviceName, handler);
-      this.log(`Service '${serviceConfig.serviceName}' registered`);
-    });
+      this._registry.set('services', serviceConfig.serviceName, handler)
+      this.log(`Service '${serviceConfig.serviceName}' registered`)
+    })
   }
 
   /**
@@ -49,7 +49,7 @@ class RestServices {
   * @return map
   */
   getServices() {
-    return this._registry.getDomain('services', new Map());
+    return this._registry.getDomain('services', new Map())
   }
 
   /**
@@ -59,7 +59,7 @@ class RestServices {
   * @return map
   */
   getServiceByName(serviceName) {
-    return this._registry.get('services', serviceName);
+    return this._registry.get('services', serviceName)
   }
 
   /**
@@ -69,26 +69,26 @@ class RestServices {
   *   Express application where services are mounted
   */
   mount(app) {
-    var self = this;
+    var self = this
 
     // For each service handlers
     self.getServices().forEach((serviceHandler, serviceName) => {
-      self.log(`Mounting service: ${serviceName}`);
+      self.log(`Mounting service: ${serviceName}`)
 
       // Mount each resource id
       serviceHandler.getResourceIdentifiers().map((resource_key) => {
-        let path = `/${serviceHandler.getServicePath()}/${resource_key}`;
-        self.log(`Registering path ${path}`);
+        let path = `/${serviceHandler.getServicePath()}/${resource_key}`
+        self.log(`Registering path ${path}`)
 
-        app.use(path, function(req, res, next) {
+        app.use(path, function(req, res, _next) {
           // Route request to resource and fetch response
           serviceHandler.lookup(req, res, function(err, response = {}) {
             // Allow altering response sending
-            self.sendResponse(err, req, res, response);
-          });
-        });
-      });
-    });
+            self.sendResponse(err, req, res, response)
+          })
+        })
+      })
+    })
   }
 
   /**
@@ -101,24 +101,24 @@ class RestServices {
   * @param response
   */
   sendResponse(err, req, res, response) {
-    var responseFormat = 'json';
-    let contentType = req.get('Content-Type');
+    var responseFormat = 'json'
+    let contentType = req.get('Content-Type')
 
     switch (contentType) {
-      case "json":
-      case "application/json":
-        responseFormat = "json";
-        break;
+    case 'json':
+    case 'application/json':
+      responseFormat = 'json'
+      break
 
-      case "javascript":
-      case "application/javascript":
-        responseFormat = "jsonp";
-        break;
+    case 'javascript':
+    case 'application/javascript':
+      responseFormat = 'jsonp'
+      break
 
-      case "text/plain":
-      case "text/html":
-        responseFormat = "text";
-        break;
+    case 'text/plain':
+    case 'text/html':
+      responseFormat = 'text'
+      break
     }
 
     if (err) {
@@ -127,43 +127,47 @@ class RestServices {
         message: err.message
       }
 
-      if (err.hasOwnProperty('reason_code'))
-        build.reason_code = err.reason_code;
+      if (err.hasOwnProperty('reason_code')) {
+        build.reason_code = err.reason_code
+      }
 
-      if (err.hasOwnProperty('reason_msg'))
-        build.reason_msg = err.reason_msg;
+      if (err.hasOwnProperty('reason_msg')) {
 
-      if (err.hasOwnProperty('context'))
-        build.context = err.context;
+        build.reason_msg = err.reason_msg
+      }
 
-      if (responseFormat == "jsonp") {
+      if (err.hasOwnProperty('context')) {
+        build.context = err.context
+      }
+
+      if (responseFormat == 'jsonp') {
         res.status(build.code).jsonp({
           error: build
-        });
-      } else if (responseFormat == "json") {
+        })
+      } else if (responseFormat == 'json') {
         res.status(build.code).json({
           error: build
-        });
+        })
       } else {
         // Unknown response format
-        res.status(build.code).send(err.message);
+        res.status(build.code).send(err.message)
       }
 
     } else if (response.hasOwnProperty('result') && response.result != null) {
       // Send result
-      if (responseFormat == "jsonp") {
-        res.jsonp(response.result);
-      } else if (responseFormat == "json") {
-        res.json(response.result);
+      if (responseFormat == 'jsonp') {
+        res.jsonp(response.result)
+      } else if (responseFormat == 'json') {
+        res.json(response.result)
       } else {
         // Unknown response format
-        res.sendStatus(400);
+        res.sendStatus(400)
       }
     } else {
       // No content, send status
-      res.sendStatus(200);
+      res.sendStatus(200)
     }
-    res.end();
+    res.end()
   }
 
   /**
@@ -172,9 +176,10 @@ class RestServices {
   * @param value
   */
   log(value) {
-    if (this._registry.get('properties', 'debug', false))
-      console.log(value);
+    if (this._registry.get('properties', 'debug', false)) {
+      console.log(value)
+    }
   }
 }
 
-export default RestServices;
+export default RestServices

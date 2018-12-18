@@ -1,8 +1,7 @@
-import _restServices from './restServices';
-export { _restServices as RestServices };
+import _restServices from './restServices'
+import _serviceHandler from './serviceHandler'
+import _resource from './resource'
 
-import _serviceHandler from './serviceHandler';
-export { _serviceHandler as ServiceHandler };
-
-import _resource from './resource';
-export { _resource as Resource };
+export { _restServices as RestServices }
+export { _serviceHandler as ServiceHandler }
+export { _resource as Resource }

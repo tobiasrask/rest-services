@@ -566,6 +566,9 @@ Run tests using [npm](https://www.npmjs.com/):
 
     $ npm run test
 
+Lint
+    $ npm run lint
+
 ### Need more infromation?
 This module is inspired by Drupal's Services module. Feel free to comment and leave issues.
 

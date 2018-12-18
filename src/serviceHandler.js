@@ -1,5 +1,5 @@
-import DomainMap from "domain-map"
-import url from "url"
+import DomainMap from 'domain-map'
+import url from 'url'
 
 class ServiceHandler {
 
@@ -12,22 +12,26 @@ class ServiceHandler {
   *   Reference to master instance, typically this is RestServices.
   */
   constructor(options, master) {
-    var self = this;
-    this._options = options;
-    this._master = master;
-    this._registry = new DomainMap();
+    var self = this
+    this._options = options
+    this._master = master
+    this._registry = new DomainMap()
 
-    if (!options.hasOwnProperty('resources')) options.resources = [];
-    if (!options.hasOwnProperty('settings')) options.settings = [];
+    if (!options.hasOwnProperty('resources')) {
+      options.resources = []
+    }
+    if (!options.hasOwnProperty('settings')) {
+      options.settings = []
+    }
 
-    options.resources.map(Resource => {
+    options.resources.map((Resource) => {
       var resource = new Resource({
         context: 'server',
         serviceSettings: options.settings
-      });
-      this._registry.set('resources', resource.getResourceID(), resource);
-      self._master.log(`Resource ${resource.getResourceID()} registered`);
-    });
+      })
+      this._registry.set('resources', resource.getResourceID(), resource)
+      self._master.log(`Resource ${resource.getResourceID()} registered`)
+    })
   }
 
   /**
@@ -36,7 +40,7 @@ class ServiceHandler {
   * @return resources
   */
   getResourceIdentifiers() {
-    return this._registry.getDomainKeysList('resources', []);
+    return this._registry.getDomainKeysList('resources', [])
   }
 
   /**
@@ -46,7 +50,7 @@ class ServiceHandler {
   * @return resource id
   */
   getResource(resourceId) {
-    return this._registry.get('resources', resourceId);
+    return this._registry.get('resources', resourceId)
   }
 
   /**
@@ -55,7 +59,7 @@ class ServiceHandler {
   * @return servicePath
   */
   getServiceName() {
-    return this._options.serviceName;
+    return this._options.serviceName
   }
 
   /**
@@ -64,16 +68,7 @@ class ServiceHandler {
   * @return servicePath
   */
   getServicePath() {
-    return this._options.servicePath;
-  }
-
-  /**
-  * Get resource by name
-  *
-  * @return servicePath
-  */
-  getServicePath() {
-    return this._options.servicePath;
+    return this._options.servicePath
   }
 
   /**
@@ -85,61 +80,73 @@ class ServiceHandler {
   * @param callback
   */
   lookup(req, res, callback) {
-    var self = this;
-    let urlInfo = this.getUrlInfo(req);
+    var self = this
+    let urlInfo = this.getUrlInfo(req)
 
-    var resource = this.getResource(urlInfo.resourceId);
-    if (!resource)
-      return callback(self.buildError(404, "Resource not found"));
+    var resource = this.getResource(urlInfo.resourceId)
+    if (!resource) {
+      return callback(self.buildError(404, 'Resource not found'))
+    }
 
-    var selector = this.buildSelector(urlInfo);
-    if (!selector)
-      return callback(self.buildError(500, `No selector for url: ${urlInfo}`));
+    var selector = this.buildSelector(urlInfo)
+    if (!selector) {
+      return callback(self.buildError(500, `No selector for url: ${urlInfo}`))
+    }
 
-    if (!resource.resourceEnabled(selector))
-      return callback(self.buildError(500, "Resource is not available"));
+    if (!resource.resourceEnabled(selector)) {
+      return callback(self.buildError(500, 'Resource is not available'))
+    }
 
     // Check access control like CORS and CSRF
-    resource.accessControl(req, res, urlInfo, err => {
-      if (err) callback(self.buildError(500, err.toString()));
+    resource.accessControl(req, res, urlInfo, (err) => {
+      if (err) {
+        callback(self.buildError(500, err.toString()))
+      }
 
       // Fetch resource info and preprocess incoming arguments
-      var endpoint = resource.getEndpointInfo(selector);
-      if (!endpoint)
-        return callback(self.buildError(404, "Resource endpoint not found"));
+      var endpoint = resource.getEndpointInfo(selector)
+      if (!endpoint) {
+        return callback(self.buildError(404, 'Resource endpoint not found'))
+      }
 
       // Build arguments for resource
-      var args = this.processArguments(req, urlInfo, endpoint.arguments);
+      var args = this.processArguments(req, urlInfo, endpoint.arguments)
 
-      if (!args)
-        return callback(self.buildError(400, "Unable to process resource arguments"));
+      if (!args) {
+        return callback(self.buildError(400, 'Unable to process resource arguments'))
+      }
 
-      args._req = req;
-      args._res = res;
-      args._urlInfo = urlInfo;
+      args._req = req
+      args._res = res
+      args._urlInfo = urlInfo
 
-      self._master.log(`Executing '${selector.type}' / '${selector.operation}'`);
+      self._master.log(`Executing '${selector.type}' / '${selector.operation}'`)
 
       // Hook lookupAlter()
-      self.lookupAlter(endpoint, selector, args, err => {
+      self.lookupAlter(endpoint, selector, args, (err) => {
+        if (err) {
+          return callback(err)
+        }
 
         // Hook endpointAccess()
         self.endpointAccess(endpoint, selector, args, (err, hasAccess) => {
-          if (err)
-            return callback(err);
-          else if (!hasAccess)
-            return callback(self.buildError(401, "Access to this endpoint is denied"));
+          if (err) {
+            return callback(err)
+          } else if (!hasAccess) {
+            return callback(self.buildError(401, 'Access to this endpoint is denied'))
+          }
 
           // Hook cacheControlEnabled()
-          var cache_control = resource.cacheControlEnabled(selector);
-          if (cache_control)
-            res.locals._cache_control = cache_control;
+          const cache_control = resource.cacheControlEnabled(selector)
+          if (cache_control) {
+            res.locals._cache_control = cache_control
+          }
 
           // Pass execution to endpoint
-          endpoint.callback(args, callback);
-        });
-      });
-    });
+          endpoint.callback(args, callback)
+        })
+      })
+    })
   }
 
   /**
@@ -149,9 +156,9 @@ class ServiceHandler {
   * @return urlInfo
   */
   getUrlInfo(req) {
-    let baseIndex = 0;
-    let parsedUrl = url.parse(req.originalUrl);
-    let urlParts = parsedUrl.pathname.split("/");
+    let baseIndex = 0
+    let parsedUrl = url.parse(req.originalUrl)
+    let urlParts = parsedUrl.pathname.split('/')
     return {
       method: req.method,
       originalUrl: req.originalUrl,
@@ -162,7 +169,7 @@ class ServiceHandler {
       resourceId: urlParts[baseIndex + 2],
       resourceIdentifier: urlParts[baseIndex + 3],
       resourceSpecifier: urlParts[baseIndex + 4]
-    };
+    }
   }
 
   /**
@@ -173,61 +180,61 @@ class ServiceHandler {
   *   Object with keys 'type' and 'operation'
   */
   buildSelector(urlInfo) {
-    var selector = false;
+    var selector = false
 
-    if (urlInfo.method == "GET") {
+    if (urlInfo.method == 'GET') {
       if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
-          type: "operations",
-          operation: "retrieve"
+          type: 'operations',
+          operation: 'retrieve'
         }
       } else {
         selector = {
-          type: "operations",
-          operation: "index"
+          type: 'operations',
+          operation: 'index'
         }
       }
-    } else if (urlInfo.method == "POST") {
+    } else if (urlInfo.method == 'POST') {
       if (urlInfo.resourceIdentifier !== undefined &&
           urlInfo.resourceSpecifier !== undefined) {
         selector = {
-          type: "targetedActions",
+          type: 'targetedActions',
           operation: urlInfo.resourceSpecifier
         }
-      } else if (urlInfo.resourceIdentifier !== undefined) {
+      } else if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
-          type: "actions",
+          type: 'actions',
           operation: urlInfo.resourceIdentifier
         }
       } else {
         selector = {
-          type: "operations",
-          operation: "create"
+          type: 'operations',
+          operation: 'create'
         }
       }
     } else if (urlInfo.method == 'PUT') {
       if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
-          type: "operations",
-          operation: "update"
+          type: 'operations',
+          operation: 'update'
         }
       }
     } else if (urlInfo.method == 'DELETE') {
       if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
-          type: "operations",
-          operation: "delete"
+          type: 'operations',
+          operation: 'delete'
         }
       }
     } else if (urlInfo.method == 'OPTIONS') {
       if (urlInfo.resourceIdentifier !== undefined) {
         selector = {
-          type: "operations",
-          operation: "options"
+          type: 'operations',
+          operation: 'options'
         }
       }
     }
-    return selector;
+    return selector
   }
 
   /**
@@ -242,65 +249,66 @@ class ServiceHandler {
   * @return args
   */
   processArguments(req, urlInfo, definitions) {
-    var self = this;
-    var args = {};
+    var self = this
+    var args = {}
 
-    definitions.map(defArg => {
+    definitions.map((defArg) => {
       let optional = defArg.hasOwnProperty('optional') ?
-        defArg['optional'] : false;
+        defArg['optional'] : false
 
-      let type = defArg.hasOwnProperty('type') ? defArg['type'] : null;
+      let type = defArg.hasOwnProperty('type') ? defArg['type'] : null
 
-      let source = defArg.hasOwnProperty('source') ? defArg['source'] : null;
+      let source = defArg.hasOwnProperty('source') ? defArg['source'] : null
 
-      let name = defArg.hasOwnProperty('name') ? defArg['name'] : null;
+      let name = defArg.hasOwnProperty('name') ? defArg['name'] : null
 
       let value = defArg.hasOwnProperty('defaultValue') ?
-          defArg.defaultValue : null;
+        defArg.defaultValue : null
 
-      if (name == null || source == null) {
-        self._master.log("services_handler",
-              "Unable to fetch name or source for resource argument", 'error');
-        return false;
+      if (name == null || source == null) {
+        self._master.log('services_handler',
+          'Unable to fetch name or source for resource argument', 'error')
+        return false
       }
 
       if (typeof source === 'string') {
         if (source === 'data') {
-          value = req.body;
+          value = req.body
         }
       } else {
         if (source.hasOwnProperty('path')) {
           // Url path
-          let url_position = urlInfo.baseIndex + 3 + source.path;
-          value = urlInfo.urlParts[url_position];
+          let url_position = urlInfo.baseIndex + 3 + source.path
+          value = urlInfo.urlParts[url_position]
 
         } else if (source.hasOwnProperty('param')) {
           // Url query parameter
           if (req.query.hasOwnProperty(source.param)) {
-            value = req.query[source.param];
+            value = req.query[source.param]
           }
 
         } else if (source.hasOwnProperty('data')) {
           // Payload
           if (req.body !== undefined && req.body.hasOwnProperty(source.param)) {
-            value = req.body[source.param];
+            value = req.body[source.param]
           }
         }
       }
 
       if (!optional && value == null) {
         // Argument not provided
-        return false;
+        return false
       }
 
       // Typecasts
       if (type != null) {
-        if (type == 'int')
-          value = !Number.isNaN(value) ? parseInt(value) : null;
+        if (type == 'int') {
+          value = !Number.isNaN(value) ? parseInt(value) : null
+        }
       }
-      args[name] = value;
-    });
-    return args;
+      args[name] = value
+    })
+    return args
   }
 
   /**
@@ -314,7 +322,7 @@ class ServiceHandler {
   * @param callback
   */
   lookupAlter(endpoint, selector, args, callback) {
-    callback(null);
+    callback(null)
   }
 
   /**
@@ -327,7 +335,7 @@ class ServiceHandler {
   *   Pass boolean value to indicate if endpoint is available.
   */
   endpointAccess(endpoint, selector, args, callback) {
-    return callback(null, true);
+    return callback(null, true)
   }
 
   /**
@@ -340,10 +348,10 @@ class ServiceHandler {
   * @return error
   */
   buildError(code, message) {
-    var error = typeof message === 'string' ? new Error(message) : message;
-    error.code = code;
-    return error;
+    var error = typeof message === 'string' ? new Error(message) : message
+    error.code = code
+    return error
   }
 }
 
-export default ServiceHandler;
+export default ServiceHandler
